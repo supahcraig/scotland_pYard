@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multiplayer Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        /* Set up the grid container with 3 equal columns */
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr; /* 3 equal columns */
+            grid-template-rows: auto auto auto 1fr auto auto;
+            gap: 10px; /* Space between grid items */
+            padding: 10px; /* Add padding around the grid */
+        }
+
+        /* General styles for all cells */
+        .cell {
+            background-color: #f0f0f0; /* Light gray background */
+            padding: 20px; /* Padding inside the cells */
+            border: 1px solid #ddd; /* Default border for the cells */
+            text-align: center; /* Center the content in the cell */
+        }
+
+        /* Specific styles for individual cells */
+        .cell-1 {
+            grid-column: 1;
+        }
+
+        .cell-2 {
+            grid-column: 2; /* Cell 2 stays in the second column of the first row */
+        }
+
+        .player-state {
+            grid-column: 3; /* Cell 3 stays in the third column of the first row */
+        }
+
+        .cell-4 {
+            grid-column: span 3; /* Cell 4 spans all 3 columns in the second row */
+            border: none; /* Remove the border to avoid unnecessary dividers around Cell 4 */
+        }
+
+        .cell-5 {
+            grid-column: 1; /* Cell 5 goes to the first column of the third row */
+        }
+
+        .cell-6 {
+            grid-column: 2; /* Cell 6 goes to the second column of the third row */
+        }
+
+        /* New rows above row 3, spanning the entire width of the grid */
+        .cell-7, .cell-8 {
+            grid-column: span 3; /* Both new cells should span all 3 columns */
+        }
+
+        .cell-7 {
+            background-color: #ffcccc; /* Just a different color for visibility */
+        }
+
+        .cell-8 {
+            background-color: #ccffcc; /* Just a different color for visibility */
+        }
+
+        #startGameContainer{
+            display: block;
+        }
+        #gameStateContainer{
+            display: block;
+            border: 2px;
+            background-color: gray;
+            font-size: 2em;
+        }
+        #currentTurnPlayer {
+            font-size: 1.2em;
+            color: red;
+            margin-top: 10px;
+        }
+
+        #chatContainer {
+            display: none;
+            margin-top: 20px;
+        }
+        #waitingMessage {
+            font-size: 1.2em;
+            color: red;
+            margin-top: 10px;
+        }
+        #messageInput {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            font-size: 1em;
+            margin-top: 10px;
+        }
+        #sendButton {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        #sendButton:disabled {
+            background-color: #ccc;
+        }
+        #chat {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 10px;
+        }
+        #yourCurrentPosition {
+            font-size: 1.2em;
+            color: black;
+            margin-top: 10px;
+        }
+        #possibleMovesList {
+            font-size: 1.2em;
+            color: blue;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="grid-container">
+        <!-- Player Name Input -->
+        <div id="playerNameContainer" class="cell cell-1">
+            <h2>Enter your name:</h2>
+            <input type="text" id="usernameInput" placeholder="Enter your name" />
+            <button onclick="joinGame()">Join Game</button>
+        </div>
+
+        <div id="startGameContainer" class="cell cell-2">
+            <h2>Click to Start the Game:</h2>
+            <button id="startGameButton" onclick="startGame()">Start Game</button>
+        </div>
+
+
+        <div id="playerStateContainer" class="cell cell-3">
+            <div id="role"></div>
+            <div id="yourCurrentPosition">pos</div>
+            <div id="possibleMovesList">moves</div>
+        </div>
+
+        <div id="gameStateContainer" class="cell cell-4">
+            <div id="currentTurnPlayer"></div>
+            <div id="mrxLocation"></div>
+            <div id="detectiveLocations"></div>
+            <div id="mrxMoveLog"></div>
+        </div>
+
+        <div id="chatContainer" class="cell cell-5">
+            <div id="waitingMessage"></div> <!-- This is where we will display the "waiting" message -->
+            <div id="chat"></div>
+            <input type="text" id="messageInput" placeholder="Type a message..." />
+            <button id="sendButton" onclick="sendMessage()" disabled>Send</button> <!-- Send button -->
+        </div>
+
+
+        <div id="gameMapContainer" class="cell cell-5">
+            <img id="gameMap" src="static/images/SY_base_map.svg.png" width="1500">
+        </div>
+
+        <div id="movesContainer" class="cell cell-7">
+            here is where the moves buttons would go
+        </div>
+
+    </div>
+
+
+
+
+    <!-- Chat Container -->
+
+
+
+    <script src="https://cdn.socket.io/4.1.3/socket.io.min.js"></script>
+    <script>
+        let playerId;
+        let playerName;
+        let role;
+        let socket;
+        let isMyTurn = false; // Track if it's the player's turn
+        let currentTurnPlayerId; // Store current turn player's ID
+        let session_id;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            socketUrl = io.connect(`http://${window.location.hostname}:${window.location.port}`);
+            socket = io.connect(socketUrl);
+
+            // Event listener for the connect event
+            socket.on('connect', function() {
+                console.log('Connected to server');
+            });
+
+            // Get session id
+            socket.on('session_id', function(data) {
+                session_id = data.session_id;
+            });
+
+
+            socket.on('initial_map', function() {
+                console.log('displaying initial map...');
+                var image = document.getElementById("gameMap");
+                console.log(image.src)
+
+                if (role == 'mrx') {
+                    var newSrc = "static/images/mrx_map.svg?t=1";
+                } else {
+                    var newSrc = "static/images/public_map.svg?t=1";
+                }
+
+                image.src = newSrc;
+            });
+
+
+            socket.on('waiting', function(data) {
+                console.log('Waiting...');
+                console.log(data);
+
+                // Hide moves buttons
+                document.getElementById("movesContainer").style.display = "none";
+
+                // Update the current turn
+                document.getElementById("currentTurnPlayer").innerHTML = `Waiting on ${data.waiting_on}...`
+
+                // Show potential moves
+                var moves = '';
+                data.potentialMovesList.forEach(function(move) {
+                    console.log(move);
+                    moves = moves + '///' + move.destination + ' via ' + move.mode;
+                });
+
+                document.getElementById("possibleMovesList").innerHTML = moves;
+                document.getElementById("possibleMovesList").style.display = "block";
+
+            });
+
+
+            socket.on('your_turn', function(data) {
+                console.log('It is your turn...');
+                console.log(data);
+
+                document.getElementById("currentTurnPlayer").innerHTML = `It is your turn.`;
+                document.getElementById("possibleMovesList").style.display = "none";
+
+                console.log("adding the buttons...");
+                document.getElementById("movesContainer").style.display = "block";
+                addMovesButtons(data.potentialMovesList);
+
+            });
+
+            socket.on('update_map', function(data) {
+                console.log('updating map & move log');
+                console.log(data)
+
+                var image = document.getElementById("gameMap");
+
+                if (role == 'mrx') {
+                    var newSrc = "static/images/mrx_map.svg";
+                } else {
+                    var newSrc = "static/images/public_map.svg";
+                }
+
+                // this will force the new image to load
+                image.src = newSrc.split('?')[0] + '?t=' + new Date().getTime();
+
+                // also update Mr X move log
+                var moveLog = document.getElementById("mrxMoveLog");
+                moveLog.innerHTML = '';
+
+                data.mrx_move_log.forEach(function(move) {
+                    console.log(move);
+
+                    var moveDiv = document.createElement('div');
+
+                    moveDiv.classList.add('mrx_move');
+                    moveDiv.innerHTML = move.mode;
+
+                    moveLog.appendChild(moveDiv);
+
+                });
+
+
+            });
+
+            socket.on('game_over', function(data) {
+                console.log('Game over!!!!!!!!!!!!!!!!!!');
+
+                document.getElementById('currentTurnPlayer').innerHTML = data.win_message;
+
+                socket.emit('end_game', { } );
+            });
+
+        });
+
+        function joinGame() {
+            console.log('joining game....');
+
+            // Get the username input value
+            playerName = document.getElementById("usernameInput").value;
+            if (playerName.trim() === "") {
+                alert("Please enter a username!");
+                return;
+            }
+
+            // Check if the game is already started (we don't want to start it again)
+            if (playerId) {
+                alert("Game already started!");
+                return;
+            }
+
+            // Hide the username prompt and show the chat container
+            document.getElementById("playerNameContainer").style.display = "none";
+            document.getElementById("chatContainer").style.display = "block";
+
+            // Generate a unique player ID (you can use UUIDs or simple counters)
+            playerId = generatePlayerId();
+
+            // Send player information (username and playerId) to the server
+            socket.emit('new_player', { playerId, playerName });
+
+            // Receive player state
+            socket.on('initial_player_state', function(data) {
+                console.log('Receiving initial_player_state as part of joinGame()');
+                console.log(data);
+
+                document.getElementById("role").innerHTML = `You are:  ${data.role}`;
+                document.getElementById("yourCurrentPosition").innerHTML = `You are currently at Stop Number ${data.location}`;
+
+                if (data.role == 'Mr. X') {
+                    console.log('your role is ---' + data.role + '---');
+                    role = 'mrx';
+                    document.getElementById("startGameContainer").style.display = "block"; // show the start game button
+                    //document.getElementById("starGameButton").disabled = false; // Enable the send button
+                } else {
+                    role = 'detective';
+                    console.log('you are not Mr. X, you are ---' + data.role + '---');
+                    document.getElementById("startGameContainer").style.display = "none"; // hide the start game button
+                }
+            });
+
+        };
+
+
+        // When the player clicks "Start Game", this function is called
+        function startGame() {
+            // enable current player, disable others
+            console.log('starting game...');
+
+            document.getElementById("startGameContainer").style.display = "none"; // hide the start button
+
+            socket.emit('start_game', { } );
+
+            socket.emit('initiate_turn', { } );
+        };
+
+
+
+        function addMovesButtons(moves) {
+            console.log('adding buttons...');
+            console.log(moves);
+
+            var container = document.getElementById("movesContainer");
+
+            //clear contents
+            container.innerHTML = '';
+
+            //add a button for each possible move
+            moves.forEach(function(move) {
+                console.log(move);
+
+                var button = document.createElement('button');
+                button.textContent = `${move.destination} via ${move.mode}`;
+
+                button.onclick = function() {
+                    console.log('Move requested for ' + move.destination + 'via' + move.mode);
+
+                    handleMove(move.destination, move.mode);
+                };
+
+                container.appendChild(button);
+            });
+        };
+
+        function handleMove(destination, mode) {
+            console.log("Player selected move: ", destination, "via", mode);
+
+            socket.emit('player_move', {destination: destination, mode: mode});
+
+            document.getElementById("movesContainer").style.display = "none";
+        };
+
+
+
+
+
+            // Listen for turn info
+        //    socket.on('turn_info', function(data) {
+        //        console.log('received turn_info event');
+        //        console.log(data);
+
+        //        if (data.my_turn) {
+        //            console.log('it is my turn');
+        //            console.log(data);
+
+        //            document.getElementById("waitingMessage").style.display = "none"; // Hide the waiting message
+        //            document.getElementById("messageInput").style.display = "block"; // Show the message input
+        //            document.getElementById("sendButton").disabled = false; // Enable the send button
+
+        //            console.log("adding the buttons...");
+        //            addMovesButtons(data.potentialMovesList);
+        //        } else {
+        //            console.log('it is not my turn');
+        //            document.getElementById("waitingMessage").innerHTML = `Waiting on ${data.whose_turn} to move`;
+        //            document.getElementById("waitingMessage").style.display = "block"; // Show the "waiting" message
+        //            document.getElementById("messageInput").style.display = "none"; // Hide the message input
+        //            document.getElementById("sendButton").disabled = true; // Disable the send button
+
+        //            //console.log("adding the buttons for not my turn...");
+        //            //addMovesButtons(data.possibleMovesList);
+        //        }
+        //    });
+        //    console.log('past turn info section');
+        //};
+
+
+
+
+
+        //Listen for initial game state
+        //socket.on('public_game_state', function(data) {
+        //    console.log(data);
+        //    document.getElementById("detectiveLocations").innerHTML = `Detectives are at stops ${data.detective_locations}`;
+        //    document.getElementById("mrxLocation").innerHTML = `Mr. X is at stop number ${data.mrx_location_public}`
+        //});
+
+            // Listen for turn info from the server  ====> why are we listening for turn info inside of joinGame()?
+        //    socket.on('turn_info', function(data) {
+        //        currentTurnPlayerId = data.currentTurnPlayerId;
+        //        console.log(data.location);
+
+        //        // If it's the player's turn, enable the message input and send button
+        //        if (currentTurnPlayerId === playerId) {
+        //            isMyTurn = true;
+        //            document.getElementById("waitingMessage").style.display = "none"; // Hide the waiting message
+        //            document.getElementById("messageInput").style.display = "block"; // Show the message input
+        //            document.getElementById("sendButton").disabled = false; // Enable the send button
+
+        //            console.log(data)
+
+        //            //this is sloppy, sending the location to everybody and then deciding to display it or not based on the current turn
+        //            //document.getElementById("yourCurrentPosition").innerHTML = `You are currently at Stop Number ${data.location}`;
+        //            //document.getElementById("possibleMovesList").innerHTML = `Possible moves:  ${data.potentialDestinations}`;
+        //            //document.getElementById("yourCurrentPosition").style.display = "block"
+
+        //        } else {
+        //            isMyTurn = false;
+        //            document.getElementById("waitingMessage").innerHTML = `Waiting on ${data.players[currentTurnPlayerId]} to move`;
+        //            document.getElementById("waitingMessage").style.display = "block"; // Show the "waiting" message
+        //            document.getElementById("messageInput").style.display = "none"; // Hide the message input
+        //            document.getElementById("sendButton").disabled = true; // Disable the send button
+        //        }
+        //    });
+
+            // Listen for Enter key press to send the message
+            const messageInput = document.getElementById("messageInput");
+            messageInput.addEventListener("keydown", function(event) {
+                if (event.key === "Enter" && isMyTurn) {
+                    // Prevent the default "Enter" behavior (like form submission)
+                    event.preventDefault();
+                    sendMessage();
+                }
+            });
+        //}
+
+        // Function to generate a simple unique player ID (you could use a UUID library)
+        function generatePlayerId() {
+            return 'player-' + Math.random().toString(36).substr(2, 9); // Simple unique ID
+        }
+
+        // Send a message to the server
+        function sendMessage() {
+            const messageInput = document.getElementById("messageInput");
+            const message = messageInput.value;
+
+            if (message) {
+                socket.emit('message', { playerId, playerName, message });
+                messageInput.value = ''; // Clear the input field
+                socket.emit('end_turn', { playerId }); // End the player's turn
+            }
+        };
+    </script>
+</body>
+</html>
