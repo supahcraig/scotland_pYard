@@ -62,31 +62,31 @@
                 <div id="ticketInventory" class="tickets-nested-grid">
                     <div class="tickets-header-row">
                         <div class="header-cell"></div>
-                        <div id="tickets_player1" class="tickets-header-cell">Player 1</div>
-                        <div id="tickets_player2" class="tickets-header-cell">Player 2</div>
-                        <div id="tickets_player3" class="tickets-header-cell">Player 3</div>
+                        <div id="tickets_name_player1" class="tickets-header-cell">Player 1</div>
+                        <div id="tickets_name_player2" class="tickets-header-cell">Player 2</div>
+                        <div id="tickets_name_player3" class="tickets-header-cell">Player 3</div>
                     </div>
 
                     <div class="tickets-row">
                         <div class="ticket-type log-taxi">Taxi</div>
-                        <div class="ticket-cell">10</div>
-                        <div class="ticket-cell">10</div>
-                        <div class="ticket-cell">10</div>
+                        <div id="taxi_count_player1" class="ticket-cell">99</div>
+                        <div id="taxi_count_player2" class="ticket-cell">99</div>
+                        <div id="taxi_count_player3" class="ticket-cell">99</div>
                     </div>
 
                     <div class="tickets-row">
                         <div class="ticket-type log-bus">Bus</div>
-                        <div class="ticket-cell">8</div>
-                        <div class="ticket-cell">8</div>
-                        <div class="ticket-cell">8</div>
+                        <div id="bus_count_player1" class="ticket-cell">99</div>
+                        <div id="bus_count_player2" class="ticket-cell">99</div>
+                        <div id="bus_count_player3" class="ticket-cell">99</div>
 
                     </div>
 
                     <div class="tickets-row">
                         <div class="ticket-type log-underground">Underground</div>
-                        <div class="ticket-cell">4</div>
-                        <div class="ticket-cell">4</div>
-                        <div class="ticket-cell">4</div>
+                        <div id="underground_count_player1" class="ticket-cell">99</div>
+                        <div id="underground_count_player2" class="ticket-cell">99</div>
+                        <div id="underground_count_player3" class="ticket-cell">99</div>
 
                     </div>
 
@@ -236,7 +236,7 @@
                 // Show potential moves
                 var moves = '';
                 data.potentialMovesList.forEach(function(move) {
-                    console.log(move);
+                    //console.log(move);
                     moves = moves + '///' + move.destination + ' via ' + move.mode;
                 });
 
@@ -258,6 +258,22 @@
                 addMovesButtons(data.potentialMovesList);
 
             });
+
+            socket.on('update_tickets', function(data) {
+                console.log('Updating ticket counts...');
+                console.log(data);
+
+                data.ticket_inventory.forEach((player, i) => {
+                    document.getElementById(`tickets_name_player${i+1}`).innerHTML = player.name + ' (You)';
+                    document.getElementById(`tickets_name_player${i+1}`).style.fontWeight = 'bold';
+                    document.getElementById(`taxi_count_player${i+1}`).innerHTML = player.tickets.taxi;
+                    document.getElementById(`bus_count_player${i+1}`).innerHTML = player.tickets.bus;
+                    document.getElementById(`underground_count_player${i+1}`).innerHTML = player.tickets.underground;
+                });
+
+
+            });
+
 
             socket.on('update_map', function(data) {
                 console.log('updating map & move log');
@@ -386,7 +402,7 @@
                 button.classList.add(`btn-${move.mode}`);
 
                 button.onclick = function() {
-                    console.log('Move requested for ' + move.destination + 'via' + move.mode);
+                    console.log('Move requested for ' + move.destination + ' via ' + move.mode);
 
                     handleMove(move.destination, move.mode);
                 };

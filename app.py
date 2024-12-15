@@ -20,7 +20,7 @@ def handle_connect():
     session_id = request.sid
     print(f'client connected with session id {session_id}')
 
-    emit('session_id', {'session_id': session_id})
+    emit('session_id', {'session_id': session_id}, broadcast=True)
 
 
 @socketio.on('join_room')
@@ -115,6 +115,9 @@ def handle_move(move):
 
     game.players[game.current_turn_index].move(move['destination'], move['mode'], game.G)
 
+    # send the updated ticket inventory to the page
+    update_tickets()
+
     # generate a new map with updated locations after the move completes
     draw_map.generate_new_map(game.players, game.G)
 
@@ -141,6 +144,14 @@ def handle_move(move):
 
     # this will end up being massively recursive, which isn't what we want
     initiate_turn()
+
+
+def update_tickets():
+    ticket_inventory = [t.tickets for t in game.players if not t.mrx]
+    ticket_inventory = [{'name': t.name, 'tickets': t.tickets} for t in game.players if not t.mrx ]
+    print(ticket_inventory)
+
+    emit('update_tickets', {'ticket_inventory': ticket_inventory})
 
 
 @socketio.on('end_game')
