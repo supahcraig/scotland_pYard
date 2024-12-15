@@ -1,0 +1,31 @@
+        .tickets-nested-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 100px); /* 8 columns in the nested grid */
+            grid-template-rows: repeat(4, 40px); /* 3 rows in the nested grid */
+            border: 2px solid gray;
+            gap: 2px;
+            justify-content: left;
+            align-items: center;
+            text-align: center;
+        }
+        .tickets-grid-item {
+            padding: 10px;
+            background-color: lightgray;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        .tickets-header-row {
+            display: contents; /* Ensures this row fits into the grid */
+        }
+        .tickets-header-cell {
+            background-color: darkgrey;
+            color: black;
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+            border: 1px solid #ddd;
+        }
+        .tickets-row {
+            display: contents; /* Makes this row behave like a single row in the grid */
+        }

@@ -4,174 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Multiplayer Game</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/maingrid.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/tickets.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/movelog.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/buttons.css') }}">
+
     <style>
         body {
             font-family: Arial, sans-serif;
-        }
-
-        /* Main Grid Layout */
-        .main-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);  /* 3 equal-width columns */
-            grid-template-rows: auto auto auto auto; /* 4 rows, adjust heights as needed */
-            gap: 10px;  /* Space between grid items */
-        }
-
-        /* General styling for grid cells */
-        .cell {
-            padding: 20px;
-            border: 1px solid #ccc;
-            background-color: #f4f4f4;
-        }
-
-        /* Specific styles for the nested grid (Cell 8) */
-        .move-log {
-            display: flex;  /* To center the nested grid */
-            background-color: lightgray;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* Nested 3x8 Grid inside Cell 8 */
-        .nested-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 200px); /* 8 columns in the nested grid */
-            grid-template-rows: repeat(8, 100px); /* 3 rows in the nested grid */
-            border: 2px solid gray;
-            gap: 5px;
-            grid-auto-flow: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-        }
-
-        /* Style for each nested item */
-        .nested-grid-item {
-            padding: 10px;
-            background-color: lightblue;
-            border: 1px solid #ddd;
-            text-align: center;
-        }
-
-        /* Optional: Styling for individual cells (e.g., if you want different styles for each grid item) */
-        .cell-1 { background-color: lightgray; }
-        .cell-2 { background-color: lightgreen; }
-        .cell-3 { background-color: lightcoral; }
-        .cell-4 { background-color: lightyellow; }
-        .cell-5 { background-color: lightpink; }
-        .cell-6 { background-color: lightblue; }
-        .grid-map { background-color: white; }
-
-        .btn {
-            display: inline-block;
-            margin-right: 10px;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.3 ease;
-        }
-        .btn-taxi {
-            background-color: yellow;
-            color: black;
-        }
-        .btn-bus {
-            background-color: green;
-            color: white;
-        }
-        .btn-underground {
-            background-color: red;
-            color: white;
-        }
-        .btn-ferry {
-            background-color: blue;
-            color: white;
-        }
-
-        .move-log-entry {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-        }
-        .log-taxi {
-            background-color: yellow;
-            color: black;
-        }
-        .log-bus {
-            background-color: green;
-            color: white;
-        }
-        .log-underground {
-            background-color: red;
-            color: white;
-        }
-        .log-ferry {
-            background-color: blue;
-            color: white;
-        }
-        .mrx-reveal {
-            background-color: black;
-            color: white;
-        }
-
-
-        #startGameContainer{
-            display: block;
-        }
-        #gameStateContainer{
-            display: block;
-            border: 2px;
-            background-color: gray;
-            font-size: 2em;
-        }
-        #currentTurnPlayer {
-            font-size: 1.2em;
-            color: red;
-            margin-top: 10px;
-        }
-
-        #chatContainer {
-            display: none;
-            margin-top: 20px;
-        }
-        #waitingMessage {
-            font-size: 1.2em;
-            color: red;
-            margin-top: 10px;
-        }
-        #messageInput {
-            display: block;
-            width: 100%;
-            padding: 10px;
-            font-size: 1em;
-            margin-top: 10px;
-        }
-        #sendButton {
-            padding: 10px 15px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        #sendButton:disabled {
-            background-color: #ccc;
-        }
-        #chat {
-            max-height: 300px;
-            overflow-y: auto;
-            margin-bottom: 10px;
-        }
-        #yourCurrentPosition {
-            font-size: 1.2em;
-            color: black;
-            margin-top: 10px;
-        }
-        #possibleMovesList {
-            font-size: 1.2em;
-            color: blue;
-            margin-top: 10px;
         }
     </style>
 </head>
@@ -205,7 +46,7 @@
         </div>
 
         <!-- Row 2: 1 cell spanning all columns -->
-        <div class="cell cell-4" style="grid-column: span 3;">
+        <div class="cell cell-4">
             <!--Cell 4 (spans all columns) -->
             <div id="gameStateContainer">
                 <div id="currentTurnPlayer"></div>
@@ -215,6 +56,46 @@
             </div>
         </div>
 
+        <div class="cell cell-6">
+            <!--Cell 6 (3rd column)-->
+            <div id="ticketInventory">
+                <div id="ticketInventory" class="tickets-nested-grid">
+                    <div class="tickets-header-row">
+                        <div class="header-cell"></div>
+                        <div id="tickets_player1" class="tickets-header-cell">Player 1</div>
+                        <div id="tickets_player2" class="tickets-header-cell">Player 2</div>
+                        <div id="tickets_player3" class="tickets-header-cell">Player 3</div>
+                    </div>
+
+                    <div class="tickets-row">
+                        <div class="ticket-type log-taxi">Taxi</div>
+                        <div class="ticket-cell">10</div>
+                        <div class="ticket-cell">10</div>
+                        <div class="ticket-cell">10</div>
+                    </div>
+
+                    <div class="tickets-row">
+                        <div class="ticket-type log-bus">Bus</div>
+                        <div class="ticket-cell">8</div>
+                        <div class="ticket-cell">8</div>
+                        <div class="ticket-cell">8</div>
+
+                    </div>
+
+                    <div class="tickets-row">
+                        <div class="ticket-type log-underground">Underground</div>
+                        <div class="ticket-cell">4</div>
+                        <div class="ticket-cell">4</div>
+                        <div class="ticket-cell">4</div>
+
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+
+
         <!-- Row 3: 2 cells, first spans 2 columns -->
         <div class="cell cell-5" style="grid-column: span 2;">
                 <!--Cell 5 (spans left 2 columns)-->
@@ -223,10 +104,8 @@
             </div>
         </div>
 
-        <div class="cell cell-6">
-            <!--Cell 6 (3rd column)-->
-            <div id="ticketInventory">ticket inventory</div>
-        </div>
+        <!--- ticket inventory used to go right here -->
+
 
         <!-- Row 4: 2 cells, first spans 2 columns, second contains a nested grid -->
         <div class="cell grid-map" style="grid-column: span 2;">
@@ -239,29 +118,29 @@
         <div class="cell move-log">
             <!-- Nested 3x8 Grid inside Cell 8 -->
             <div id="mrx_move_log" class="nested-grid">
-                <div id="mrx_move_0" class="nested-grid-item"></div>
-                <div id="mrx_move_1" class="nested-grid-item"></div>
+                <div id="mrx_move_0" class="nested-grid-item">Round 1</div>
+                <div id="mrx_move_1" class="nested-grid-item">Round 2</div>
                 <div id="mrx_move_2" class="nested-grid-item mrx-reveal">Mr. X Reveal</div>
-                <div id="mrx_move_3" class="nested-grid-item"></div>
-                <div id="mrx_move_4" class="nested-grid-item"></div>
-                <div id="mrx_move_5" class="nested-grid-item"></div>
-                <div id="mrx_move_6" class="nested-grid-item"></div>
+                <div id="mrx_move_3" class="nested-grid-item">Round 4</div>
+                <div id="mrx_move_4" class="nested-grid-item">Round 5</div>
+                <div id="mrx_move_5" class="nested-grid-item">Round 6</div>
+                <div id="mrx_move_6" class="nested-grid-item">Round 7</div>
                 <div id="mrx_move_7" class="nested-grid-item mrx-reveal">Mr. X Reveal</div>
-                <div id="mrx_move_8" class="nested-grid-item"></div>
-                <div id="mrx_move_9" class="nested-grid-item"></div>
-                <div id="mrx_move_10" class="nested-grid-item"></div>
-                <div id="mrx_move_11" class="nested-grid-item"></div>
+                <div id="mrx_move_8" class="nested-grid-item">Round 9</div>
+                <div id="mrx_move_9" class="nested-grid-item">Round 10</div>
+                <div id="mrx_move_10" class="nested-grid-item">Round 11</div>
+                <div id="mrx_move_11" class="nested-grid-item">Round 12</div>
                 <div id="mrx_move_12" class="nested-grid-item mrx-reveal">Mr. X Reveal</div>
-                <div id="mrx_move_13" class="nested-grid-item"></div>
-                <div id="mrx_move_14" class="nested-grid-item"></div>
-                <div id="mrx_move_15" class="nested-grid-item"></div>
-                <div id="mrx_move_16" class="nested-grid-item"></div>
+                <div id="mrx_move_13" class="nested-grid-item">Round 14</div>
+                <div id="mrx_move_14" class="nested-grid-item">Round 15</div>
+                <div id="mrx_move_15" class="nested-grid-item">Round 16</div>
+                <div id="mrx_move_16" class="nested-grid-item">Round 17</div>
                 <div id="mrx_move_17" class="nested-grid-item mrx-reveal">Mr. X Reveal</div>
-                <div id="mrx_move_18" class="nested-grid-item"></div>
-                <div id="mrx_move_19" class="nested-grid-item"></div>
-                <div id="mrx_move_20" class="nested-grid-item"></div>
-                <div id="mrx_move_21" class="nested-grid-item"></div>
-                <div id="mrx_move_22" class="nested-grid-item"></div>
+                <div id="mrx_move_18" class="nested-grid-item">Round 19</div>
+                <div id="mrx_move_19" class="nested-grid-item">Round 20</div>
+                <div id="mrx_move_20" class="nested-grid-item">Round 21</div>
+                <div id="mrx_move_21" class="nested-grid-item">Round 22</div>
+                <div id="mrx_move_22" class="nested-grid-item">Round 23</div>
                 <div id="mrx_move_23" class="nested-grid-item mrx-reveal">Mr. X Reveal</div>
             </div>
         </div>
@@ -300,7 +179,7 @@
 
 
 
-    <!-- Chat Container -->
+
 
 
 

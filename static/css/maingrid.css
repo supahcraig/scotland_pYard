@@ -1,0 +1,98 @@
+        /* Main Grid Layout */
+        .main-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);  /* 3 equal-width columns */
+            grid-template-rows: auto auto auto auto; /* 4 rows, adjust heights as needed */
+            gap: 10px;  /* Space between grid items */
+        }
+
+        /* General styling for grid cells */
+        .cell {
+            padding: 20px;
+            border: 1px solid #ccc;
+            background-color: #f4f4f4;
+        }
+
+        /* Specific styles for the nested grid (Cell 8) */
+        .move-log {
+            display: flex;  /* To center the nested grid */
+            background-color: lightgray;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Optional: Styling for individual cells (e.g., if you want different styles for each grid item) */
+        .cell-1 { background-color: lightgray; }
+        .cell-2 { background-color: lightgreen; }
+        .cell-3 { background-color: lightcoral; }
+        .cell-4 {
+            background-color: lightyellow;
+            grid-column: span 2;
+        }
+        .cell-5 {
+            background-color: lightpink;
+            grid-column: span 2;
+        }
+        .cell-6 {
+            background-color: lightblue;
+            grid-row: span 2;
+        }
+
+        .grid-map { background-color: white; }
+
+        #startGameContainer{
+            display: block;
+        }
+        #gameStateContainer{
+            display: block;
+            border: 2px;
+            background-color: gray;
+            font-size: 2em;
+        }
+        #currentTurnPlayer {
+            font-size: 1.2em;
+            color: red;
+            margin-top: 10px;
+        }
+
+        #chatContainer {
+            display: none;
+            margin-top: 20px;
+        }
+        #waitingMessage {
+            font-size: 1.2em;
+            color: red;
+            margin-top: 10px;
+        }
+        #messageInput {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            font-size: 1em;
+            margin-top: 10px;
+        }
+        #sendButton {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        #sendButton:disabled {
+            background-color: #ccc;
+        }
+        #chat {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 10px;
+        }
+        #yourCurrentPosition {
+            font-size: 1.2em;
+            color: black;
+            margin-top: 10px;
+        }
+        #possibleMovesList {
+            font-size: 1.2em;
+            color: blue;
+            margin-top: 10px;
+        }

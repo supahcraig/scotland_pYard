@@ -1,0 +1,26 @@
+.btn {
+    display: inline-block;
+    margin-right: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3 ease;
+}
+.btn-taxi {
+    background-color: yellow;
+    color: black;
+}
+.btn-bus {
+    background-color: green;
+    color: white;
+}
+.btn-underground {
+    background-color: red;
+    color: white;
+}
+.btn-ferry {
+    background-color: blue;
+    color: white;
+}

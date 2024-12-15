@@ -1,0 +1,46 @@
+        .nested-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 200px); /* 8 columns in the nested grid */
+            grid-template-rows: repeat(8, 100px); /* 3 rows in the nested grid */
+            border: 2px solid gray;
+            gap: 5px;
+            grid-auto-flow: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        /* Style for each nested item */
+        .nested-grid-item {
+            padding: 10px;
+            background-color: darkgray;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        .move-log-entry {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .log-taxi {
+            background-color: yellow;
+            color: black;
+        }
+        .log-bus {
+            background-color: green;
+            color: white;
+        }
+        .log-underground {
+            background-color: red;
+            color: white;
+        }
+        .log-ferry {
+            background-color: blue;
+            color: white;
+        }
+        .mrx-reveal {
+            background-color: black;
+            color: white;
+        }
