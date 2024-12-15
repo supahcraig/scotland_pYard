@@ -17,17 +17,26 @@ def build_map_image(output_filename, coord_list):
     encoded_image = encode_image(filepath + input_file)
 
     dwg = svgwrite.Drawing(filepath + output_filename, size=(width, height))
-    dwg.add(dwg.image(f'data:image/png;base64,{encoded_image}', size=(width, height), opacity=0.7))
+    dwg.add(dwg.image(f'data:image/png;base64,{encoded_image}', size=(width, height), opacity=0.99))
 
     dwg.save()
 
-    player_colors = ['slateblue', 'hotpink', 'purple', 'lightgreen', 'aqua', 'darkred']
+    player_colors = ['slateblue', 'hotpink', 'purple', 'aqua', 'darkred', 'lightgreen']
 
-    #print(coord_list)
+    # check for collisions
+    # if 2 people are on the same spot, we should draw a semi-circle OR maybe just make the circle's progressively bigger?
+
+    collisions = {}
+
     for i, c in enumerate(coord_list):
-        #print(f'{output_filename}:  adding {player_colors[i]} marker @ {c}')
-        marker = dwg.circle(center=c, r=15, fill=player_colors[i])
-        dwg.add(marker)
+        if c != (0, 0):
+            collisions[c] = collisions.get(c, 0) + 1
+
+            #marker = dwg.circle(center=c, r=15, fill=player_colors[i])
+            #dwg.add(marker)
+
+            marker_ring = dwg.circle(center=c, r=(55 + (collisions[c] * 10)), stroke=player_colors[i], stroke_width=12, fill='none')
+            dwg.add(marker_ring)
 
     dwg.save()
 
