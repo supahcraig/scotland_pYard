@@ -111,6 +111,10 @@
             background-color: blue;
             color: white;
         }
+        .mrx-reveal {
+            background-color: black;
+            color: white;
+        }
 
 
         #startGameContainer{
@@ -235,30 +239,30 @@
         <div class="cell move-log">
             <!-- Nested 3x8 Grid inside Cell 8 -->
             <div id="mrx_move_log" class="nested-grid">
-                <div id="mrx_move_0" class="nested-grid-item move-log-ticket log-taxi" >TAXI</div>
+                <div id="mrx_move_0" class="nested-grid-item"></div>
                 <div id="mrx_move_1" class="nested-grid-item"></div>
-                <div id="mrx_move_2" class="nested-grid-item"></div>
+                <div id="mrx_move_2" class="nested-grid-item mrx-reveal">Mr. X Reveal</div>
                 <div id="mrx_move_3" class="nested-grid-item"></div>
                 <div id="mrx_move_4" class="nested-grid-item"></div>
                 <div id="mrx_move_5" class="nested-grid-item"></div>
                 <div id="mrx_move_6" class="nested-grid-item"></div>
-                <div id="mrx_move_7" class="nested-grid-item"></div>
+                <div id="mrx_move_7" class="nested-grid-item mrx-reveal">Mr. X Reveal</div>
                 <div id="mrx_move_8" class="nested-grid-item"></div>
                 <div id="mrx_move_9" class="nested-grid-item"></div>
                 <div id="mrx_move_10" class="nested-grid-item"></div>
                 <div id="mrx_move_11" class="nested-grid-item"></div>
-                <div id="mrx_move_12" class="nested-grid-item"></div>
+                <div id="mrx_move_12" class="nested-grid-item mrx-reveal">Mr. X Reveal</div>
                 <div id="mrx_move_13" class="nested-grid-item"></div>
                 <div id="mrx_move_14" class="nested-grid-item"></div>
                 <div id="mrx_move_15" class="nested-grid-item"></div>
                 <div id="mrx_move_16" class="nested-grid-item"></div>
-                <div id="mrx_move_17" class="nested-grid-item"></div>
+                <div id="mrx_move_17" class="nested-grid-item mrx-reveal">Mr. X Reveal</div>
                 <div id="mrx_move_18" class="nested-grid-item"></div>
                 <div id="mrx_move_19" class="nested-grid-item"></div>
                 <div id="mrx_move_20" class="nested-grid-item"></div>
                 <div id="mrx_move_21" class="nested-grid-item"></div>
                 <div id="mrx_move_22" class="nested-grid-item"></div>
-                <div id="mrx_move_23" class="nested-grid-item"></div>
+                <div id="mrx_move_23" class="nested-grid-item mrx-reveal">Mr. X Reveal</div>
             </div>
         </div>
     </div>
@@ -405,6 +409,7 @@
                     move_log_entry.innerHTML = move.mode;
                     move_log_entry.classList.add('move-log-entry');
                     move_log_entry.classList.add(`log-${move.mode}`);
+                    move_log_entry.classList.remove('mrx-reveal');
 
                 });
 

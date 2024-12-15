@@ -1,7 +1,7 @@
 import csv
 import networkx as nx
 import random
-from Player import Detective, MrX
+from player import Detective, MrX
 import draw_map
 
 
@@ -33,7 +33,7 @@ class Game:
 
         # Create a node per entry in the grid locations file
         # append the coordinates to each node
-        with open('grid_locations.txt') as f:
+        with open('grid_locations.csv') as f:
             reader = csv.reader(f)
             next(reader)
 

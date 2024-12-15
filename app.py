@@ -9,9 +9,9 @@ socketio = SocketIO(app)
 game = Game()
 
 
-@app.route('/socket')
+@app.route('/game')
 def socket():
-    return render_template('socket.html')
+    return render_template('index.html')
 
 
 @socketio.on('connect')
