@@ -9,61 +9,109 @@
             font-family: Arial, sans-serif;
         }
 
-        /* Set up the grid container with 3 equal columns */
-        .grid-container {
+        /* Main Grid Layout */
+        .main-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr; /* 3 equal columns */
-            grid-template-rows: auto auto auto 1fr auto auto;
-            gap: 10px; /* Space between grid items */
-            padding: 10px; /* Add padding around the grid */
+            grid-template-columns: repeat(3, 1fr);  /* 3 equal-width columns */
+            grid-template-rows: auto auto auto auto; /* 4 rows, adjust heights as needed */
+            gap: 10px;  /* Space between grid items */
         }
 
-        /* General styles for all cells */
+        /* General styling for grid cells */
         .cell {
-            background-color: #f0f0f0; /* Light gray background */
-            padding: 20px; /* Padding inside the cells */
-            border: 1px solid #ddd; /* Default border for the cells */
-            text-align: center; /* Center the content in the cell */
+            padding: 20px;
+            border: 1px solid #ccc;
+            background-color: #f4f4f4;
         }
 
-        /* Specific styles for individual cells */
-        .cell-1 {
-            grid-column: 1;
+        /* Specific styles for the nested grid (Cell 8) */
+        .move-log {
+            display: flex;  /* To center the nested grid */
+            background-color: lightgray;
+            align-items: center;
+            justify-content: center;
         }
 
-        .cell-2 {
-            grid-column: 2; /* Cell 2 stays in the second column of the first row */
+        /* Nested 3x8 Grid inside Cell 8 */
+        .nested-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 200px); /* 8 columns in the nested grid */
+            grid-template-rows: repeat(8, 100px); /* 3 rows in the nested grid */
+            border: 2px solid gray;
+            gap: 5px;
+            grid-auto-flow: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
         }
 
-        .player-state {
-            grid-column: 3; /* Cell 3 stays in the third column of the first row */
+        /* Style for each nested item */
+        .nested-grid-item {
+            padding: 10px;
+            background-color: lightblue;
+            border: 1px solid #ddd;
+            text-align: center;
         }
 
-        .cell-4 {
-            grid-column: span 3; /* Cell 4 spans all 3 columns in the second row */
-            border: none; /* Remove the border to avoid unnecessary dividers around Cell 4 */
+        /* Optional: Styling for individual cells (e.g., if you want different styles for each grid item) */
+        .cell-1 { background-color: lightgray; }
+        .cell-2 { background-color: lightgreen; }
+        .cell-3 { background-color: lightcoral; }
+        .cell-4 { background-color: lightyellow; }
+        .cell-5 { background-color: lightpink; }
+        .cell-6 { background-color: lightblue; }
+        .grid-map { background-color: white; }
+
+        .btn {
+            display: inline-block;
+            margin-right: 10px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3 ease;
+        }
+        .btn-taxi {
+            background-color: yellow;
+            color: black;
+        }
+        .btn-bus {
+            background-color: green;
+            color: white;
+        }
+        .btn-underground {
+            background-color: red;
+            color: white;
+        }
+        .btn-ferry {
+            background-color: blue;
+            color: white;
         }
 
-        .cell-5 {
-            grid-column: 1; /* Cell 5 goes to the first column of the third row */
+        .move-log-entry {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .log-taxi {
+            background-color: yellow;
+            color: black;
+        }
+        .log-bus {
+            background-color: green;
+            color: white;
+        }
+        .log-underground {
+            background-color: red;
+            color: white;
+        }
+        .log-ferry {
+            background-color: blue;
+            color: white;
         }
 
-        .cell-6 {
-            grid-column: 2; /* Cell 6 goes to the second column of the third row */
-        }
-
-        /* New rows above row 3, spanning the entire width of the grid */
-        .cell-7, .cell-8 {
-            grid-column: span 3; /* Both new cells should span all 3 columns */
-        }
-
-        .cell-7 {
-            background-color: #ffcccc; /* Just a different color for visibility */
-        }
-
-        .cell-8 {
-            background-color: #ccffcc; /* Just a different color for visibility */
-        }
 
         #startGameContainer{
             display: block;
@@ -125,48 +173,123 @@
 </head>
 <body>
 
-    <div class="grid-container">
-        <!-- Player Name Input -->
-        <div id="playerNameContainer" class="cell cell-1">
-            <h2>Enter your name:</h2>
-            <input type="text" id="usernameInput" placeholder="Enter your name" />
-            <button onclick="joinGame()">Join Game</button>
+    <div class="main-grid">
+        <!-- Row 1: 3 columns -->
+        <div class="cell cell-1">
+            <!-- Player Name Input -->
+            <div id="playerNameContainer">
+                <h2>Enter your name:</h2>
+                <input type="text" id="usernameInput" placeholder="Enter your name" />
+                <button onclick="joinGame()">Join Game</button>
+            </div>
         </div>
 
-        <div id="startGameContainer" class="cell cell-2">
-            <h2>Click to Start the Game:</h2>
-            <button id="startGameButton" onclick="startGame()">Start Game</button>
+        <div class="cell cell-2">
+            <div id="startGameContainer">
+                <h2>Click to Start the Game:</h2>
+                <button id="startGameButton" onclick="startGame()">Start Game</button>
+            </div>
         </div>
 
-
-        <div id="playerStateContainer" class="cell cell-3">
-            <div id="role"></div>
-            <div id="yourCurrentPosition">pos</div>
-            <div id="possibleMovesList">moves</div>
+        <div class="cell cell-3">
+            <div id="playerStateContainer">
+                <div id="role"></div>
+                <div id="yourCurrentPosition">pos</div>
+                <div id="detectiveLocations"></div>
+                <div id="possibleMovesList">moves</div>
+            </div>
         </div>
 
-        <div id="gameStateContainer" class="cell cell-4">
-            <div id="currentTurnPlayer"></div>
-            <div id="mrxLocation"></div>
-            <div id="detectiveLocations"></div>
-            <div id="mrxMoveLog"></div>
+        <!-- Row 2: 1 cell spanning all columns -->
+        <div class="cell cell-4" style="grid-column: span 3;">
+            <!--Cell 4 (spans all columns) -->
+            <div id="gameStateContainer">
+                <div id="currentTurnPlayer"></div>
+                <div id="mrxLocation"></div>
+                <div id="detectiveLocations"></div>
+                <!--<div id="mrxMoveLog"></div> -->
+            </div>
         </div>
 
-        <div id="chatContainer" class="cell cell-5">
-            <div id="waitingMessage"></div> <!-- This is where we will display the "waiting" message -->
+        <!-- Row 3: 2 cells, first spans 2 columns -->
+        <div class="cell cell-5" style="grid-column: span 2;">
+                <!--Cell 5 (spans left 2 columns)-->
+                <!-- this is where the move buttons will go -->
+            <div id="movesContainer">
+            </div>
+        </div>
+
+        <div class="cell cell-6">
+            <!--Cell 6 (3rd column)-->
+            <div id="ticketInventory"></div>
+        </div>
+
+        <!-- Row 4: 2 cells, first spans 2 columns, second contains a nested grid -->
+        <div class="cell grid-map" style="grid-column: span 2;">
+            <!--Cell 7 (spans left 2 columns)-->
+            <div id="gameMapContainer">
+                <img id="gameMap" src="static/images/SY_base_map.svg.png" width="1500">
+            </div>
+        </div>
+
+        <div class="cell move-log">
+            <!-- Nested 3x8 Grid inside Cell 8 -->
+            <div id="mrx_move_log" class="nested-grid">
+                <div id="mrx_move_0" class="nested-grid-item move-log-ticket log-taxi" >TAXI</div>
+                <div id="mrx_move_1" class="nested-grid-item"></div>
+                <div id="mrx_move_2" class="nested-grid-item"></div>
+                <div id="mrx_move_3" class="nested-grid-item"></div>
+                <div id="mrx_move_4" class="nested-grid-item"></div>
+                <div id="mrx_move_5" class="nested-grid-item"></div>
+                <div id="mrx_move_6" class="nested-grid-item"></div>
+                <div id="mrx_move_7" class="nested-grid-item"></div>
+                <div id="mrx_move_8" class="nested-grid-item"></div>
+                <div id="mrx_move_9" class="nested-grid-item"></div>
+                <div id="mrx_move_10" class="nested-grid-item"></div>
+                <div id="mrx_move_11" class="nested-grid-item"></div>
+                <div id="mrx_move_12" class="nested-grid-item"></div>
+                <div id="mrx_move_13" class="nested-grid-item"></div>
+                <div id="mrx_move_14" class="nested-grid-item"></div>
+                <div id="mrx_move_15" class="nested-grid-item"></div>
+                <div id="mrx_move_16" class="nested-grid-item"></div>
+                <div id="mrx_move_17" class="nested-grid-item"></div>
+                <div id="mrx_move_18" class="nested-grid-item"></div>
+                <div id="mrx_move_19" class="nested-grid-item"></div>
+                <div id="mrx_move_20" class="nested-grid-item"></div>
+                <div id="mrx_move_21" class="nested-grid-item"></div>
+                <div id="mrx_move_22" class="nested-grid-item"></div>
+                <div id="mrx_move_23" class="nested-grid-item"></div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+        <!--
+        <div id="chatContainer" class="cell cell-6">
+            <div id="waitingMessage"></div>
             <div id="chat"></div>
             <input type="text" id="messageInput" placeholder="Type a message..." />
-            <button id="sendButton" onclick="sendMessage()" disabled>Send</button> <!-- Send button -->
+            <button id="sendButton" onclick="sendMessage()" disabled>Send</button>
         </div>
+        -->
+        <!--
+        <div id="mrxMoveLog" class="move-log">
+
+        </div>
+        -->
 
 
-        <div id="gameMapContainer" class="cell cell-5">
-            <img id="gameMap" src="static/images/SY_base_map.svg.png" width="1500">
-        </div>
 
-        <div id="movesContainer" class="cell cell-7">
-            here is where the moves buttons would go
-        </div>
+
+
+
+
 
     </div>
 
@@ -269,18 +392,19 @@
                 image.src = newSrc.split('?')[0] + '?t=' + new Date().getTime();
 
                 // also update Mr X move log
-                var moveLog = document.getElementById("mrxMoveLog");
-                moveLog.innerHTML = '';
+                //var moveLog = document.getElementById("mrxMoveLog");
+                //moveLog.innerHTML = '';
 
-                data.mrx_move_log.forEach(function(move) {
-                    console.log(move);
+                data.mrx_move_log.forEach((move, index) => {
+                    console.log("iterating over the move log");
+                    console.log(index, move);
+                    console.log(`mrx_move_${index}`);
 
-                    var moveDiv = document.createElement('div');
+                    move_log_entry = document.getElementById(`mrx_move_${index}`)
 
-                    moveDiv.classList.add('mrx_move');
-                    moveDiv.innerHTML = move.mode;
-
-                    moveLog.appendChild(moveDiv);
+                    move_log_entry.innerHTML = move.mode;
+                    move_log_entry.classList.add('move-log-entry');
+                    move_log_entry.classList.add(`log-${move.mode}`);
 
                 });
 
@@ -315,7 +439,6 @@
 
             // Hide the username prompt and show the chat container
             document.getElementById("playerNameContainer").style.display = "none";
-            document.getElementById("chatContainer").style.display = "block";
 
             // Generate a unique player ID (you can use UUIDs or simple counters)
             playerId = generatePlayerId();
@@ -375,6 +498,8 @@
 
                 var button = document.createElement('button');
                 button.textContent = `${move.destination} via ${move.mode}`;
+                button.classList.add(`btn`);
+                button.classList.add(`btn-${move.mode}`);
 
                 button.onclick = function() {
                     console.log('Move requested for ' + move.destination + 'via' + move.mode);
@@ -398,83 +523,17 @@
 
 
 
-            // Listen for turn info
-        //    socket.on('turn_info', function(data) {
-        //        console.log('received turn_info event');
-        //        console.log(data);
 
-        //        if (data.my_turn) {
-        //            console.log('it is my turn');
-        //            console.log(data);
-
-        //            document.getElementById("waitingMessage").style.display = "none"; // Hide the waiting message
-        //            document.getElementById("messageInput").style.display = "block"; // Show the message input
-        //            document.getElementById("sendButton").disabled = false; // Enable the send button
-
-        //            console.log("adding the buttons...");
-        //            addMovesButtons(data.potentialMovesList);
-        //        } else {
-        //            console.log('it is not my turn');
-        //            document.getElementById("waitingMessage").innerHTML = `Waiting on ${data.whose_turn} to move`;
-        //            document.getElementById("waitingMessage").style.display = "block"; // Show the "waiting" message
-        //            document.getElementById("messageInput").style.display = "none"; // Hide the message input
-        //            document.getElementById("sendButton").disabled = true; // Disable the send button
-
-        //            //console.log("adding the buttons for not my turn...");
-        //            //addMovesButtons(data.possibleMovesList);
-        //        }
-        //    });
-        //    console.log('past turn info section');
-        //};
-
-
-
-
-
-        //Listen for initial game state
-        //socket.on('public_game_state', function(data) {
-        //    console.log(data);
-        //    document.getElementById("detectiveLocations").innerHTML = `Detectives are at stops ${data.detective_locations}`;
-        //    document.getElementById("mrxLocation").innerHTML = `Mr. X is at stop number ${data.mrx_location_public}`
-        //});
-
-            // Listen for turn info from the server  ====> why are we listening for turn info inside of joinGame()?
-        //    socket.on('turn_info', function(data) {
-        //        currentTurnPlayerId = data.currentTurnPlayerId;
-        //        console.log(data.location);
-
-        //        // If it's the player's turn, enable the message input and send button
-        //        if (currentTurnPlayerId === playerId) {
-        //            isMyTurn = true;
-        //            document.getElementById("waitingMessage").style.display = "none"; // Hide the waiting message
-        //            document.getElementById("messageInput").style.display = "block"; // Show the message input
-        //            document.getElementById("sendButton").disabled = false; // Enable the send button
-
-        //            console.log(data)
-
-        //            //this is sloppy, sending the location to everybody and then deciding to display it or not based on the current turn
-        //            //document.getElementById("yourCurrentPosition").innerHTML = `You are currently at Stop Number ${data.location}`;
-        //            //document.getElementById("possibleMovesList").innerHTML = `Possible moves:  ${data.potentialDestinations}`;
-        //            //document.getElementById("yourCurrentPosition").style.display = "block"
-
-        //        } else {
-        //            isMyTurn = false;
-        //            document.getElementById("waitingMessage").innerHTML = `Waiting on ${data.players[currentTurnPlayerId]} to move`;
-        //            document.getElementById("waitingMessage").style.display = "block"; // Show the "waiting" message
-        //            document.getElementById("messageInput").style.display = "none"; // Hide the message input
-        //            document.getElementById("sendButton").disabled = true; // Disable the send button
-        //        }
-        //    });
 
             // Listen for Enter key press to send the message
-            const messageInput = document.getElementById("messageInput");
-            messageInput.addEventListener("keydown", function(event) {
-                if (event.key === "Enter" && isMyTurn) {
-                    // Prevent the default "Enter" behavior (like form submission)
-                    event.preventDefault();
-                    sendMessage();
-                }
-            });
+        //    const messageInput = document.getElementById("messageInput");
+        //    messageInput.addEventListener("keydown", function(event) {
+        //        if (event.key === "Enter" && isMyTurn) {
+        //            // Prevent the default "Enter" behavior (like form submission)
+        //            event.preventDefault();
+        //            sendMessage();
+        //        }
+        //    });
         //}
 
         // Function to generate a simple unique player ID (you could use a UUID library)
