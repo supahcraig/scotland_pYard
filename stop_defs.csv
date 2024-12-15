@@ -905,7 +905,6 @@ start_node, end_node, transport_mode
 191, 190, bus
 192, 191, taxi
 192, 194, taxi
-192, 180, bus
 192, 190, bus
 193, 180, taxi
 193, 181, taxi
