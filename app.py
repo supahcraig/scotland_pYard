@@ -163,7 +163,6 @@ def handle_move(move):
 
 
 def update_tickets():
-    ticket_inventory = [t.tickets for t in game.players if not t.mrx]
     ticket_inventory = [{'name': t.name, 'tickets': t.tickets} for t in game.players if not t.mrx ]
     print(ticket_inventory)
 

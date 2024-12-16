@@ -194,46 +194,69 @@
         let currentTurnPlayerId; // Store current turn player's ID
         let session_id;
 
+
         function update_role(role) {
                 document.getElementById("role").innerHTML = `You are:  ${role}`;
         };
+
 
         function update_my_location(location) {
                 document.getElementById("yourCurrentPosition").innerHTML = `You are currently at Stop Number ${location}`;
         };
 
+
+/*
+        function update_ticket_inventory(data) {
+
+            elements = [document.getElementById(`taxi_count_player${data.name}`),
+                        document.getElementById(`bus_count_player${data.name}`),
+                        document.getElementById(`underground_count_player${data.name}`),
+                        ];
+
+            elements.forEach(element => {
+                console.log(element.id);
+
+                switch (element.id.slice(0,4)) {
+                    case 'taxi':
+                        element.innerHTML = data.tickets.taxi;
+                        break;
+                    case 'bus_':
+                        element.innerHTML = data.tickets.bus;
+                        break;
+                    case 'unde':
+                        element.innerHTML = data.tickets.underground;
+                        break;
+                    default:
+                        console.log('inside the default case:   ---' + element.id.slice(0,4) + '---');
+                        element.innerHTML = -1;
+                }
+
+
+
+        };
+*/
+
         function set_ticket_inventory_name(data) {
             // here we re-set the ID's of the various ticket inventory tags to match the actual player name
-            // might be better to just create them correctly in the first place?
+            // TODO:  need to set the column names & ticket inventories for ALL the players
+            //      each player only has THEIR columns renamed
+            //      so when the other players try to have their inventories updated, it throws an error because those names don't exist for them
+            //      might be better to just create them correctly in the first place?
 
             var element = document.getElementById(`tickets_name_player${data.player_index}`)
             element.id = "tickets_name_" + data.name;
-            element.innerHTML = data.name;
+            element.innerHTML = data.name + ' (You)';
 
+            // here we have to refer to the elements using the player index
+            // this won't work later, as we will have changed the element names to use the player name
             elements = [document.getElementById(`taxi_count_player${data.player_index}`),
                         document.getElementById(`bus_count_player${data.player_index}`),
                         document.getElementById(`underground_count_player${data.player_index}`),
-                        ]
+                        ];
 
             elements.forEach(element => {
-                //var element = document.getElementById(`tickets_name_player${data.player_index}`);
                 element.id = element.id.slice(0, element.id.length - 7) + data.name;
-                console.log(element.id);
                 element.style.fontWeight = "bold";
-
-                // todo:  for some reason the underground case fails, but these all get updated
-                //switch (element.id.slice(0,4)) {
-                //    case 'taxi':
-                //        element.innerHTML = data.tickets.taxi;
-                //        break;
-                //    case 'bus_':
-                //        element.innerHTML = data.tickets.bus;
-                //        break;
-                //    case 'unde':
-                //        element.innerHTML = data.tickets.underground;
-                //    default:
-                //        element.innerHTML = -1;
-                //}
 
             });
         };
@@ -282,7 +305,7 @@
 
 
             // this will initialize the entire game screen on a per-player basis
-            // [ ] initial player locations on the map
+            // [x] initial player locations on the map
             // [x] player & ticket inventories
             // [x] YOUR inventory & name should be highlighted somehow
             // [x] YOUR current location in the game state
@@ -362,6 +385,8 @@
                 console.log(data);
 
                 // todo:  mr. x doesn't have a ticket inventory to update on the screen
+                // this is the ticket inventory for each person:
+                // [{name, inventory}, {name, inventory}, ...]
                 update_ticket_inventory(data);
 
             });
@@ -437,6 +462,13 @@
 
             // Send player information (username and playerId) to the server
             socket.emit('new_player', { playerId, playerName });
+
+
+            // TODO:  update the Ticket Inventory Grid to add a column for our newly added player
+                // modifiy the grid geometry
+                // add the necessary divs for the new player
+                // pray they go where we need them to
+            //gridContainer.style.gridTemplateColumns = `repeat(${columns}, 1fr)`; // Example: 1fr for equal column sizes
 
             // Receive player state
             socket.on('initial_player_state', function(data) {
