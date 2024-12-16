@@ -4,8 +4,10 @@ class Player:
     def __init__(self, name, position, id):
         #self.G = city_graph
         self.id = id  # this is the session ID for the player
+        self.player_index = -1 # todo should probably initialize this on create
         self.mrx = False
         self.detective = True
+        self.role = 'Detective'
         self.name = name
         self.position = position  # Initial position of the player
         #self.tickets = {'taxi': 10, 'bus': 8, 'underground': 4, 'ferry': 0}
@@ -13,8 +15,18 @@ class Player:
         self.my_turn = False
         self.move_log = []
 
-        print(f'Player {self.name} created at starting location {self.position}')
+        print(f'Player {self.name} ({self.player_index=}) created at starting location {self.position}')
 
+
+    def get_current_state(self):
+        state = {'name': self.name,
+                 'player_index': self.player_index,
+                 'role': self.role,
+                 'position': self.position,
+                 'tickets': self.tickets
+                 }
+
+        return state
 
     def update_move_log(self, destination, mode):
         print('updating move log: ', destination, mode)

@@ -185,6 +185,7 @@
 
     <script src="https://cdn.socket.io/4.1.3/socket.io.min.js"></script>
     <script>
+        let player_index; // 0 is Mr. X
         let playerId;
         let playerName;
         let role;
@@ -192,6 +193,78 @@
         let isMyTurn = false; // Track if it's the player's turn
         let currentTurnPlayerId; // Store current turn player's ID
         let session_id;
+
+        function update_role(role) {
+                document.getElementById("role").innerHTML = `You are:  ${role}`;
+        };
+
+        function update_my_location(location) {
+                document.getElementById("yourCurrentPosition").innerHTML = `You are currently at Stop Number ${location}`;
+        };
+
+        function set_ticket_inventory_name(data) {
+            // here we re-set the ID's of the various ticket inventory tags to match the actual player name
+            // might be better to just create them correctly in the first place?
+
+            var element = document.getElementById(`tickets_name_player${data.player_index}`)
+            element.id = "tickets_name_" + data.name;
+            element.innerHTML = data.name;
+
+            elements = [document.getElementById(`taxi_count_player${data.player_index}`),
+                        document.getElementById(`bus_count_player${data.player_index}`),
+                        document.getElementById(`underground_count_player${data.player_index}`),
+                        ]
+
+            elements.forEach(element => {
+                //var element = document.getElementById(`tickets_name_player${data.player_index}`);
+                element.id = element.id.slice(0, element.id.length - 7) + data.name;
+                console.log(element.id);
+                element.style.fontWeight = "bold";
+
+                // todo:  for some reason the underground case fails, but these all get updated
+                //switch (element.id.slice(0,4)) {
+                //    case 'taxi':
+                //        element.innerHTML = data.tickets.taxi;
+                //        break;
+                //    case 'bus_':
+                //        element.innerHTML = data.tickets.bus;
+                //        break;
+                //    case 'unde':
+                //        element.innerHTML = data.tickets.underground;
+                //    default:
+                //        element.innerHTML = -1;
+                //}
+
+            });
+        };
+
+        function set_initial_map() {
+            var image = document.getElementById("gameMap");
+            console.log(image.src)
+
+            if (role == 'mrx') {
+                var newSrc = "static/images/mrx_map.svg?t=1";
+            } else {
+                var newSrc = "static/images/public_map.svg?t=1";
+            }
+
+            image.src = newSrc;
+        };
+
+
+        function update_ticket_inventory(data) {
+            console.log('Updating ticket counts...');
+            console.log(data);
+
+            data.ticket_inventory.forEach((player, i) => {
+                document.getElementById(`taxi_count_${player.name}`).innerHTML = player.tickets.taxi;
+                document.getElementById(`bus_count_${player.name}`).innerHTML = player.tickets.bus;
+                document.getElementById(`underground_count_${player.name}`).innerHTML = player.tickets.underground;
+            });
+
+
+        };
+
 
         document.addEventListener('DOMContentLoaded', function() {
             socketUrl = io.connect(`http://${window.location.hostname}:${window.location.port}`);
@@ -208,19 +281,44 @@
             });
 
 
-            socket.on('initial_map', function() {
-                console.log('displaying initial map...');
-                var image = document.getElementById("gameMap");
-                console.log(image.src)
+            // this will initialize the entire game screen on a per-player basis
+            // [ ] initial player locations on the map
+            // [x] player & ticket inventories
+            // [x] YOUR inventory & name should be highlighted somehow
+            // [x] YOUR current location in the game state
+            // [ ] Detective locations in the game state
+            // [x] Your role in the game state
+            // [ ] Set player's color in the ticket inventory
+            socket.on('initialize', function(data) {
+                console.log('INITIALIZING BOARD');
+                console.log(data);
 
-                if (role == 'mrx') {
-                    var newSrc = "static/images/mrx_map.svg?t=1";
-                } else {
-                    var newSrc = "static/images/public_map.svg?t=1";
-                }
+                // this event will be sent to each player separately
 
-                image.src = newSrc;
+                update_role(data.player.role);
+                update_my_location(data.player.position);
+                //update_detective_locations(data.detective_locations);
+
+                set_ticket_inventory_name(data.player);
+
+                set_initial_map();
+
             });
+
+
+            //socket.on('initial_map', function() {
+            //    console.log('displaying initial map...');
+            //    var image = document.getElementById("gameMap");
+            //    console.log(image.src)
+            //
+            //    if (role == 'mrx') {
+            //        var newSrc = "static/images/mrx_map.svg?t=1";
+            //    } else {
+            //        var newSrc = "static/images/public_map.svg?t=1";
+            //    }
+            //
+            //    image.src = newSrc;
+            //});
 
 
             socket.on('waiting', function(data) {
@@ -263,14 +361,8 @@
                 console.log('Updating ticket counts...');
                 console.log(data);
 
-                data.ticket_inventory.forEach((player, i) => {
-                    document.getElementById(`tickets_name_player${i+1}`).innerHTML = player.name + ' (You)';
-                    document.getElementById(`tickets_name_player${i+1}`).style.fontWeight = 'bold';
-                    document.getElementById(`taxi_count_player${i+1}`).innerHTML = player.tickets.taxi;
-                    document.getElementById(`bus_count_player${i+1}`).innerHTML = player.tickets.bus;
-                    document.getElementById(`underground_count_player${i+1}`).innerHTML = player.tickets.underground;
-                });
-
+                // todo:  mr. x doesn't have a ticket inventory to update on the screen
+                update_ticket_inventory(data);
 
             });
 
@@ -351,8 +443,12 @@
                 console.log('Receiving initial_player_state as part of joinGame()');
                 console.log(data);
 
-                document.getElementById("role").innerHTML = `You are:  ${data.role}`;
-                document.getElementById("yourCurrentPosition").innerHTML = `You are currently at Stop Number ${data.location}`;
+                player_index = data.player_index;
+                //document.getElementById("role").innerHTML = `You are:  ${data.role}`;
+                //update_role(data.role);
+
+                //document.getElementById("yourCurrentPosition").innerHTML = `You are currently at Stop Number ${data.location}`;
+                //update_my_location(data.location);
 
                 if (data.role == 'Mr. X') {
                     console.log('your role is ---' + data.role + '---');
@@ -442,16 +538,16 @@
         }
 
         // Send a message to the server
-        function sendMessage() {
-            const messageInput = document.getElementById("messageInput");
-            const message = messageInput.value;
+        //function sendMessage() {
+        //    const messageInput = document.getElementById("messageInput");
+        //    const message = messageInput.value;
 
-            if (message) {
-                socket.emit('message', { playerId, playerName, message });
-                messageInput.value = ''; // Clear the input field
-                socket.emit('end_turn', { playerId }); // End the player's turn
-            }
-        };
+        //    if (message) {
+        //        socket.emit('message', { playerId, playerName, message });
+        //        messageInput.value = ''; // Clear the input field
+        //        socket.emit('end_turn', { playerId }); // End the player's turn
+        //    }
+        //};
     </script>
 </body>
 </html>

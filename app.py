@@ -41,9 +41,11 @@ def handle_new_player(data):
     # grab the specific player we just created
     # function returns the number of players currently in the game, so the index is 1 less than that
     i = game.create_player(data['playerName'], player_sid) - 1
+
     print(f'joined as player # {i}')
 
     p = game.players[i]
+    p.player_index = i
     print(f'{p.name} has session id={p.id}')
 
     if p.mrx:
@@ -58,7 +60,19 @@ def handle_new_player(data):
 
     emit('initial_player_state', {'location': p.position,
                                   'role': role,
+                                  'player_index': p.player_index
     }, room=p.id)
+
+
+def initialize_board():
+    print(f'Initializing board...')
+
+    for p in game.players:
+        print(f'initializing for {p.name}')
+        emit('initialize', {'player': p.get_current_state()}
+            , room=p.id
+        )
+
 
 
 @socketio.on('start_game')
@@ -71,7 +85,9 @@ def start_game(_):
     # this will generate new maps, and then the page will refresh it
     draw_map.generate_new_map(game.players, game.G)
 
-    emit('initial_map', { }, broadcast=True)
+    initialize_board()
+
+    #emit('initial_map', { }, broadcast=True)  # moved this to the initialize function on the page
 
     initiate_turn()
 
