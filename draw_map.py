@@ -21,16 +21,19 @@ def build_map_image(output_filename, coord_list):
 
     dwg.save()
 
+    # colors are now chosen by the player at join time
     #player_colors = ['slateblue', 'hotpink', 'purple', 'aqua', 'darkred', 'lightgreen']
 
     # if 2 people are on the same spot, we make the circle's progressively bigger
     collisions = {}
 
     for i, c in enumerate(coord_list):
+        # need to slice, since the coordds are the first 2 elements, and the color was injected later as the 3rd
         if c[:2] != (0, 0):
             collisions[c] = collisions.get(c, 0) + 1
 
             marker_ring = dwg.circle(center=c[:2], r=(55 + (collisions[c] * 10)), stroke=c[2], stroke_width=12, fill='none')
+
             dwg.add(marker_ring)
 
     dwg.save()

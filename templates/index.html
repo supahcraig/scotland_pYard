@@ -61,19 +61,25 @@
             <!--Cell 6 (3rd column)-->
             <div id="ticketInventory" class="tickets-nested-grid">
                 <div id="ticketHeaderRow" class="tickets-header-row">
-                    <div class="tickets-header-cell" style="grid-column: 1; grid-row: 1">!</div>
+                    <div class="tickets-header-cell" style="grid-column: 1; grid-row: 1"></div>
                 </div>
 
                 <div id="ticketsTaxiRow" class="tickets-row">
-                    <div class="ticket-type log-taxi" style="grid-column: 1; grid-row: 2">Taxi</div>
+                    <div class="ticket-type" style="grid-column: 1; grid-row: 2">
+                        <img src="{{ url_for('static', filename='images/taxi.svg.png') }}" height="40px">
+                    </div>
                 </div>
 
                 <div id="ticketsBusRow" class="tickets-row">
-                    <div class="ticket-type log-bus"style="grid-column: 1; grid-row: 3">Bus</div>
+                    <div class="ticket-type" style="grid-column: 1; grid-row: 3">
+                        <img src="{{ url_for('static', filename='images/bus.svg.png') }}" height="40px">
+                    </div>
                 </div>
 
                 <div id="ticketsUndergroundRow" class="tickets-row">
-                    <div class="ticket-type log-underground" style="grid-column: 1; grid-row: 4">Underground</div>
+                    <div class="ticket-type" style="grid-column: 1; grid-row: 4">
+                        <img src="{{ url_for('static', filename='images/underground.svg.png') }}" height="40px">
+                    </div>
                 </div>
 
 
@@ -89,7 +95,6 @@
             </div>
         </div>
 
-        <!--- ticket inventory used to go right here -->
 
 
         <!-- Row 4: 2 cells, first spans 2 columns, second contains a nested grid -->
@@ -279,7 +284,6 @@
             });
 
 
-            // this will initialize the entire game screen on a per-player basis
             // [x] initial player locations on the map
             // [x] player & ticket inventories
             // [x] YOUR inventory & name should be highlighted somehow
@@ -287,6 +291,7 @@
             // [ ] Detective locations in the game state
             // [x] Your role in the game state
             // [x] Set player's color in the ticket inventory
+            // this will initialize the entire game screen on a per-player basis
             socket.on('initialize', function(data) {
                 console.log('INITIALIZING BOARD');
                 console.log(data);
@@ -296,8 +301,6 @@
                 update_role(data.player.role);
                 update_my_location(data.player.position);
                 //update_detective_locations(data.detective_locations);
-
-                //set_ticket_inventory_name(data.player);
 
                 set_initial_map();
 
@@ -326,9 +329,9 @@
                 document.getElementById("currentTurnPlayer").innerHTML = `Waiting on ${data.waiting_on}...`
 
                 // Show potential moves
+                // TODO: is this even necessary?   Does anyone even look at it?
                 var moves = '';
                 data.potentialMovesList.forEach(function(move) {
-                    //console.log(move);
                     moves = moves + '///' + move.destination + ' via ' + move.mode;
                 });
 
@@ -355,7 +358,7 @@
                 console.log('Updating ticket counts...');
                 console.log(data);
 
-                // todo:  mr. x doesn't have a ticket inventory to update on the screen
+                // todo:  mr. x doesn't have a ticket inventory to update on the screen; throws a harmless error
                 // this is the ticket inventory for each person:
                 // [{name, inventory}, {name, inventory}, ...]
 
@@ -379,10 +382,6 @@
                 // this will force the new image to load
                 image.src = newSrc.split('?')[0] + '?t=' + new Date().getTime();
 
-                // also update Mr X move log
-                //var moveLog = document.getElementById("mrxMoveLog");
-                //moveLog.innerHTML = '';
-
                 data.mrx_move_log.forEach((move, index) => {
                     console.log("iterating over the move log");
                     console.log(index, move);
@@ -390,15 +389,19 @@
 
                     move_log_entry = document.getElementById(`mrx_move_${index}`)
 
-                    move_log_entry.innerHTML = move.mode;
-                    move_log_entry.classList.add('move-log-entry');
-                    move_log_entry.classList.add(`log-${move.mode}`);
+                    move_log_entry.innerHTML = '';
+
+                    img = document.createElement('img');
+                    img.src = `static/images/${move.mode}.svg.png`;
+                    img.height = "60";
+                    move_log_entry.appendChild(img);
+
                     move_log_entry.classList.remove('mrx-reveal');
 
                 });
 
-
             });
+
 
             socket.on('game_over', function(data) {
                 console.log('Game over!!!!!!!!!!!!!!!!!!');
@@ -448,11 +451,6 @@
                 console.log(data);
 
                 player_index = data.player_index;
-                //document.getElementById("role").innerHTML = `You are:  ${data.role}`;
-                //update_role(data.role);
-
-                //document.getElementById("yourCurrentPosition").innerHTML = `You are currently at Stop Number ${data.location}`;
-                //update_my_location(data.location);
 
                 if (data.role == 'Mr. X') {
                     console.log('your role is ---' + data.role + '---');
@@ -516,7 +514,7 @@
         function handleMove(destination, mode) {
             console.log("Player selected move: ", destination, "via", mode);
 
-            document.getElementById("yourCurrentPosition").textContent = 'You are currently at Stop # ' + destination;
+            document.getElementById("yourCurrentPosition").textContent = 'You are currently at Stop Number ' + destination;
 
             socket.emit('player_move', {destination: destination, mode: mode});
 
@@ -525,7 +523,10 @@
 
 
 
-
+        // Function to generate a simple unique player ID (you could use a UUID library)
+        function generatePlayerId() {
+            return 'player-' + Math.random().toString(36).substr(2, 9); // Simple unique ID
+        }
 
 
 
@@ -540,10 +541,7 @@
         //    });
         //}
 
-        // Function to generate a simple unique player ID (you could use a UUID library)
-        function generatePlayerId() {
-            return 'player-' + Math.random().toString(36).substr(2, 9); // Simple unique ID
-        }
+
 
         // Send a message to the server
         //function sendMessage() {
