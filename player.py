@@ -11,8 +11,8 @@ class Player:
         self.name = name
         self.color = '#00FF00'  # default color TODO: iterate through a color list as players are added
         self.position = position  # Initial position of the player
-        #self.tickets = {'taxi': 10, 'bus': 8, 'underground': 4, 'ferry': 0}
-        self.tickets = {'taxi': 25, 'bus': 25, 'underground': 25, 'ferry': 0}
+        self.tickets = {'taxi': 10, 'bus': 8, 'underground': 4, 'ferry': 0}
+        #self.tickets = {'taxi': 25, 'bus': 25, 'underground': 25, 'ferry': 0}
         self.my_turn = False
         self.move_log = []
 
@@ -41,7 +41,9 @@ class Player:
         for u, v, data in city_graph.edges(self.position, data=True):
             if u == self.position:
                 if self.tickets[data['mode']] > 0:
+                    # don't return destinations requiring tickets you don't have
                     destinations_set.add((v, data['mode']))
+
                 else:
                     print(f'{data["mode"]} routes are not available because you have no {data["mode"]} tickets remaining.')
 
@@ -76,11 +78,6 @@ class Player:
                 self.position = new_position
                 self.tickets[transportation_mode] += -1
 
-                #print(f"{self.name} moved to {self.position}")
-                #print(self.tickets)
-                #print(f'{self.name} is now at Stop Number {self.position}')
-
-                moved = True
                 self.update_move_log(new_position, transportation_mode)
 
                 return True
@@ -134,12 +131,36 @@ class MrX(Player):
         self.visible_location = False
         self.my_turn = True
 
-        self.tickets = {'taxi': 25, 'bus': 25, 'underground': 25, 'ferry': 25, '2xMove': 2}
+        self.tickets = {'taxi': 25, 'bus': 25, 'underground': 25, 'ferry': 2, '2xMove': 2}
 
+    def potential_destinations(self, city_graph, detective_locations):
+        #pm = city_graph.edges(self.position, data=True)
+
+        destinations_set = set()
+
+        for u, v, data in city_graph.edges(self.position, data=True):
+            if u == self.position:
+                if self.tickets[data['mode']] > 0:
+                    # don't return destinations requiring tickets you don't have
+                    destinations_set.add((v, data['mode']))
+
+                else:
+                    print(f'{data["mode"]} routes are not available because you have no {data["mode"]} tickets remaining.')
+
+        # ok this doesn't work because it takes mode into account.
+        print(f'your possible moves: {destinations_set}....detectives are at {detective_locations}')
+        available = destinations_set - set(detective_locations)
+        print(f'your available moves are {available}')
+
+        #destinations = [{'destination': dest, 'mode': mode} for dest, mode in destinations_set]
+        destinations = [{'destination': dest, 'mode': mode} for dest, mode in available]
+
+        print(f'Possible destinations/modes: {destinations}')
+        return destinations
 
 
     def update_visibility(self, round):
-        print(f'Updating visibilty during {round=}')
+        print(f'Updating visibility during {round=}')
         if round in [2, 7, 12, 17, 23]:
             print('this is a visible round')
             self.visible_location = True
@@ -154,6 +175,7 @@ class MrX(Player):
             return True
         else:
             return False
+
 
     def check_for_available_moves(self, detective_positions, city_graph):
         possible_destinations = []

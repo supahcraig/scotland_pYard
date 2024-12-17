@@ -14,6 +14,7 @@ class Game:
         random.shuffle(self.starting_locations)
 
         # move number when Mr X must reveal his location
+        # todo:  make this be more dynamic, the move log & map need to leverage this
         location_reveals = [3, 8, 13, 18, 24]
 
         self.G = self.create_city_graph('stop_defs.csv')
@@ -75,7 +76,6 @@ class Game:
 
         return len(self.players) # as a proxy for player ID
 
-
     def move_player(self, player_id, new_position, mode):
         p = self.players[player_id]
         return p.move(new_position=new_position, transportation_mode=mode, city_graph=self.G)
@@ -94,9 +94,8 @@ class Game:
 
     def check_for_cornered(self):
         # check to see if Mr. X as any available moves
-        # todo implemaent the cornered function, probably better as a mr. x method
+        # todo implement the cornered function, probably better as a mr. x method
         pass
-
 
     def increment_turn(self):
         # this is just the raw turn number across all rounds

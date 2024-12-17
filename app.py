@@ -48,7 +48,6 @@ def handle_new_player(data):
     p.player_index = i
     p.color = data['playerColor']
     print(f'{p.name} has session id={p.id}')
-    print(f'{data.color=}')
 
     if p.mrx:
         role = 'Mr. X'
@@ -121,16 +120,20 @@ def initiate_turn():
     emit('update_map', {'mrx_move_log': game.players[0].move_log }, broadcast=True)
 
     for p in game.players:
+        if p.mrx:
+            detective_locations = [x.position for x in game.players if not x.mrx]
+            available_moves = p.potential_destinations(game.G, detective_locations)
+        else:
+            available_moves = p.potential_destinations(game.G)
         if not p.my_turn:
             emit('waiting', {'waiting_on': game.players[game.current_turn_index].name,
-                             'potentialMovesList': p.potential_destinations(game.G),
+                             'potentialMovesList': available_moves,
                              },
                  room=p.id)
 
         else:
-            available_moves = p.potential_destinations(game.G)
             if available_moves != []:
-                emit('your_turn', {'potentialMovesList': p.potential_destinations(game.G),
+                emit('your_turn', {'potentialMovesList': available_moves,
                                    },
                      room=p.id)
             else:
