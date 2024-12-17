@@ -56,42 +56,26 @@
             </div>
         </div>
 
-        <div class="cell cell-6">
+        <div id="ticketInventoryContainer" class="cell cell-6">
             <!--Cell 6 (3rd column)-->
-            <div id="ticketInventory">
-                <div id="ticketInventory" class="tickets-nested-grid">
-                    <div class="tickets-header-row">
-                        <div class="header-cell"></div>
-                        <div id="tickets_name_player1" class="tickets-header-cell">Player 1</div>
-                        <div id="tickets_name_player2" class="tickets-header-cell">Player 2</div>
-                        <div id="tickets_name_player3" class="tickets-header-cell">Player 3</div>
-                    </div>
-
-                    <div class="tickets-row">
-                        <div class="ticket-type log-taxi">Taxi</div>
-                        <div id="taxi_count_player1" class="ticket-cell">99</div>
-                        <div id="taxi_count_player2" class="ticket-cell">99</div>
-                        <div id="taxi_count_player3" class="ticket-cell">99</div>
-                    </div>
-
-                    <div class="tickets-row">
-                        <div class="ticket-type log-bus">Bus</div>
-                        <div id="bus_count_player1" class="ticket-cell">99</div>
-                        <div id="bus_count_player2" class="ticket-cell">99</div>
-                        <div id="bus_count_player3" class="ticket-cell">99</div>
-
-                    </div>
-
-                    <div class="tickets-row">
-                        <div class="ticket-type log-underground">Underground</div>
-                        <div id="underground_count_player1" class="ticket-cell">99</div>
-                        <div id="underground_count_player2" class="ticket-cell">99</div>
-                        <div id="underground_count_player3" class="ticket-cell">99</div>
-
-                    </div>
-
-
+            <div id="ticketInventory" class="tickets-nested-grid">
+                <div id="ticketHeaderRow" class="tickets-header-row">
+                    <div class="tickets-header-cell" style="grid-column: 1; grid-row: 1">!</div>
                 </div>
+
+                <div id="ticketsTaxiRow" class="tickets-row">
+                    <div class="ticket-type log-taxi" style="grid-column: 1; grid-row: 2">Taxi</div>
+                </div>
+
+                <div id="ticketsBusRow" class="tickets-row">
+                    <div class="ticket-type log-bus"style="grid-column: 1; grid-row: 3">Bus</div>
+                </div>
+
+                <div id="ticketsUndergroundRow" class="tickets-row">
+                    <div class="ticket-type log-underground" style="grid-column: 1; grid-row: 4">Underground</div>
+                </div>
+
+
             </div>
         </div>
 
@@ -205,61 +189,75 @@
         };
 
 
-/*
-        function update_ticket_inventory(data) {
+        // this needs to be run on startup for each player for each client
+        function add_player_to_ticket_grid(data) {
+            console.log('adding player to ticket grid');
+            console.log(data);
 
-            elements = [document.getElementById(`taxi_count_player${data.name}`),
-                        document.getElementById(`bus_count_player${data.name}`),
-                        document.getElementById(`underground_count_player${data.name}`),
-                        ];
+            // TODO:  update the Ticket Inventory Grid to add a column for our newly added player
+                // modifiy the grid geometry
+                // add the necessary divs for the new player
+                // pray they go where we need them to
 
-            elements.forEach(element => {
-                console.log(element.id);
-
-                switch (element.id.slice(0,4)) {
-                    case 'taxi':
-                        element.innerHTML = data.tickets.taxi;
-                        break;
-                    case 'bus_':
-                        element.innerHTML = data.tickets.bus;
-                        break;
-                    case 'unde':
-                        element.innerHTML = data.tickets.underground;
-                        break;
-                    default:
-                        console.log('inside the default case:   ---' + element.id.slice(0,4) + '---');
-                        element.innerHTML = -1;
-                }
+            // modify the grid to have an additional column when a player joins
+            grid = document.getElementById("ticketInventory");
+            style = window.getComputedStyle(grid);
+            colArray = style.getPropertyValue('grid-template-columns').trim().split(' ');
+            colCount = colArray.length;
+            colArray.push('100px');
+            grid.style.gridTemplateColumns = colArray.join(' ');
 
 
+            // add the Player name cell
+            var e = document.getElementById("ticketHeaderRow");
+            d = document.createElement('div');
 
-        };
-*/
+            d.id = 'tickets_name_' + data.name;
+            d.classList.add('tickets-header-cell');
+            d.textContent = data.name;
+            e.appendChild(d);
 
-        function set_ticket_inventory_name(data) {
-            // here we re-set the ID's of the various ticket inventory tags to match the actual player name
-            // TODO:  need to set the column names & ticket inventories for ALL the players
-            //      each player only has THEIR columns renamed
-            //      so when the other players try to have their inventories updated, it throws an error because those names don't exist for them
-            //      might be better to just create them correctly in the first place?
 
-            var element = document.getElementById(`tickets_name_player${data.player_index}`)
-            element.id = "tickets_name_" + data.name;
-            element.innerHTML = data.name + ' (You)';
+            // add the cells to hold the individual player ticket counts
+            modes = ['Taxi', 'Bus', 'Underground'];
 
-            // here we have to refer to the elements using the player index
-            // this won't work later, as we will have changed the element names to use the player name
-            elements = [document.getElementById(`taxi_count_player${data.player_index}`),
-                        document.getElementById(`bus_count_player${data.player_index}`),
-                        document.getElementById(`underground_count_player${data.player_index}`),
-                        ];
-
-            elements.forEach(element => {
-                element.id = element.id.slice(0, element.id.length - 7) + data.name;
-                element.style.fontWeight = "bold";
-
+            modes.forEach(mode => {
+                var element = document.getElementById('tickets' + mode + 'Row');
+                div = document.createElement('div');
+                div.id = mode.toLowerCase() + '_count_' + data.name;
+                div.classList.add("ticket-cell");
+                element.appendChild(div);
             });
+
+
+            /*
+            // add the Taxi cell content
+            var taxi = document.getElementById("ticketsTaxiRow");
+            d = document.createElement('div');
+
+            d.id = 'taxi_count_' + data.name;
+            d.classList.add("ticket-cell");
+            taxi.appendChild(d);
+
+            // add the Bus cell content
+            var bus = document.getElementById("ticketsBusRow");
+            d = document.createElement('div');
+
+            d.id = 'bus_count_' + data.name;
+            d.classList.add("ticket-cell");
+            bus.appendChild(d);
+
+            // add the Underground cell content
+            var underground = document.getElementById("ticketsUndergroundRow");
+            d = document.createElement('div');
+
+            d.id = 'underground_count_' + data.name;
+            d.classList.add("ticket-cell");
+            underground.appendChild(d);
+            */
         };
+
+
 
         function set_initial_map() {
             var image = document.getElementById("gameMap");
@@ -322,26 +320,22 @@
                 update_my_location(data.player.position);
                 //update_detective_locations(data.detective_locations);
 
-                set_ticket_inventory_name(data.player);
+                //set_ticket_inventory_name(data.player);
 
                 set_initial_map();
 
             });
 
+            socket.on('initialize_ticket_grid', function(data) {
+                console.log('Initializing ticket grid for all players...');
+                console.log(data);
 
-            //socket.on('initial_map', function() {
-            //    console.log('displaying initial map...');
-            //    var image = document.getElementById("gameMap");
-            //    console.log(image.src)
-            //
-            //    if (role == 'mrx') {
-            //        var newSrc = "static/images/mrx_map.svg?t=1";
-            //    } else {
-            //        var newSrc = "static/images/public_map.svg?t=1";
-            //    }
-            //
-            //    image.src = newSrc;
-            //});
+                data.players.forEach(person => {
+                    add_player_to_ticket_grid(person);
+                });
+
+            });
+
 
 
             socket.on('waiting', function(data) {
@@ -387,6 +381,7 @@
                 // todo:  mr. x doesn't have a ticket inventory to update on the screen
                 // this is the ticket inventory for each person:
                 // [{name, inventory}, {name, inventory}, ...]
+
                 update_ticket_inventory(data);
 
             });
@@ -438,6 +433,7 @@
 
         });
 
+
         function joinGame() {
             console.log('joining game....');
 
@@ -464,11 +460,8 @@
             socket.emit('new_player', { playerId, playerName });
 
 
-            // TODO:  update the Ticket Inventory Grid to add a column for our newly added player
-                // modifiy the grid geometry
-                // add the necessary divs for the new player
-                // pray they go where we need them to
-            //gridContainer.style.gridTemplateColumns = `repeat(${columns}, 1fr)`; // Example: 1fr for equal column sizes
+
+
 
             // Receive player state
             socket.on('initial_player_state', function(data) {
@@ -539,8 +532,12 @@
             });
         };
 
+
+
         function handleMove(destination, mode) {
             console.log("Player selected move: ", destination, "via", mode);
+
+            document.getElementById("yourCurrentPosition").textContent = 'You are currently at Stop # ' + destination;
 
             socket.emit('player_move', {destination: destination, mode: mode});
 

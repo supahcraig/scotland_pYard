@@ -1,7 +1,7 @@
         .tickets-nested-grid {
             display: grid;
-            grid-template-columns: repeat(4, 100px); /* 8 columns in the nested grid */
-            grid-template-rows: repeat(4, 40px); /* 3 rows in the nested grid */
+            grid-template-columns: repeat(1, 100px);
+            grid-template-rows: repeat(4, 40px);
             border: 2px solid gray;
             gap: 2px;
             justify-content: left;
@@ -16,6 +16,7 @@
         }
 
         .tickets-header-row {
+            background-color: red;
             display: contents; /* Ensures this row fits into the grid */
         }
         .tickets-header-cell {

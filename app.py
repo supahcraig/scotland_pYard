@@ -60,7 +60,7 @@ def handle_new_player(data):
 
     emit('initial_player_state', {'location': p.position,
                                   'role': role,
-                                  'player_index': p.player_index
+                                  'player_index': p.player_index,
     }, room=p.id)
 
 
@@ -74,6 +74,13 @@ def initialize_board():
         )
 
 
+def initialize_ticket_grid():
+    print(f'Initializing the ticket grid for all players....')
+
+    players = [{'name': p.name, 'index': p.player_index} for p in game.players if not p.mrx]
+
+    emit('initialize_ticket_grid', {'players': players}, broadcast=True)
+
 
 @socketio.on('start_game')
 def start_game(_):
@@ -85,7 +92,14 @@ def start_game(_):
     # this will generate new maps, and then the page will refresh it
     draw_map.generate_new_map(game.players, game.G)
 
+    # this initializes the board for each player
     initialize_board()
+
+    # this doesn't update the tickets, just the player grid itself
+    initialize_ticket_grid()
+
+    # this updates the grid with the current ticket counts
+    update_tickets()
 
     #emit('initial_map', { }, broadcast=True)  # moved this to the initialize function on the page
 
@@ -166,7 +180,7 @@ def update_tickets():
     ticket_inventory = [{'name': t.name, 'tickets': t.tickets} for t in game.players if not t.mrx ]
     print(ticket_inventory)
 
-    emit('update_tickets', {'ticket_inventory': ticket_inventory})
+    emit('update_tickets', {'ticket_inventory': ticket_inventory}, broadcast=True)
 
 
 @socketio.on('end_game')
