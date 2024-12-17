@@ -25,6 +25,7 @@
             <div id="playerNameContainer">
                 <h2>Enter your name:</h2>
                 <input type="text" id="usernameInput" placeholder="Enter your name" />
+                <input type="color" id="playerColor" >
                 <button onclick="joinGame()">Join Game</button>
             </div>
         </div>
@@ -215,6 +216,7 @@
             d.id = 'tickets_name_' + data.name;
             d.classList.add('tickets-header-cell');
             d.textContent = data.name;
+            d.style.backgroundColor = data.color;
             e.appendChild(d);
 
 
@@ -226,35 +228,10 @@
                 div = document.createElement('div');
                 div.id = mode.toLowerCase() + '_count_' + data.name;
                 div.classList.add("ticket-cell");
+                div.style.backgroundColor = data.color;
                 element.appendChild(div);
             });
 
-
-            /*
-            // add the Taxi cell content
-            var taxi = document.getElementById("ticketsTaxiRow");
-            d = document.createElement('div');
-
-            d.id = 'taxi_count_' + data.name;
-            d.classList.add("ticket-cell");
-            taxi.appendChild(d);
-
-            // add the Bus cell content
-            var bus = document.getElementById("ticketsBusRow");
-            d = document.createElement('div');
-
-            d.id = 'bus_count_' + data.name;
-            d.classList.add("ticket-cell");
-            bus.appendChild(d);
-
-            // add the Underground cell content
-            var underground = document.getElementById("ticketsUndergroundRow");
-            d = document.createElement('div');
-
-            d.id = 'underground_count_' + data.name;
-            d.classList.add("ticket-cell");
-            underground.appendChild(d);
-            */
         };
 
 
@@ -278,9 +255,9 @@
             console.log(data);
 
             data.ticket_inventory.forEach((player, i) => {
-                document.getElementById(`taxi_count_${player.name}`).innerHTML = player.tickets.taxi;
-                document.getElementById(`bus_count_${player.name}`).innerHTML = player.tickets.bus;
-                document.getElementById(`underground_count_${player.name}`).innerHTML = player.tickets.underground;
+                document.getElementById(`taxi_count_${player.name}`).textContent = player.tickets.taxi;
+                document.getElementById(`bus_count_${player.name}`).textContent = player.tickets.bus;
+                document.getElementById(`underground_count_${player.name}`).textContent = player.tickets.underground;
             });
 
 
@@ -309,7 +286,7 @@
             // [x] YOUR current location in the game state
             // [ ] Detective locations in the game state
             // [x] Your role in the game state
-            // [ ] Set player's color in the ticket inventory
+            // [x] Set player's color in the ticket inventory
             socket.on('initialize', function(data) {
                 console.log('INITIALIZING BOARD');
                 console.log(data);
@@ -439,6 +416,7 @@
 
             // Get the username input value
             playerName = document.getElementById("usernameInput").value;
+            playerColor = document.getElementById("playerColor").value;
             if (playerName.trim() === "") {
                 alert("Please enter a username!");
                 return;
@@ -457,7 +435,8 @@
             playerId = generatePlayerId();
 
             // Send player information (username and playerId) to the server
-            socket.emit('new_player', { playerId, playerName });
+            console.log('color= ', playerColor);
+            socket.emit('new_player', { playerId, playerName, playerColor });
 
 
 

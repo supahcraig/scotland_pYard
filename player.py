@@ -9,6 +9,7 @@ class Player:
         self.detective = True
         self.role = 'Detective'
         self.name = name
+        self.color = '#00FF00'  # default color TODO: iterate through a color list as players are added
         self.position = position  # Initial position of the player
         #self.tickets = {'taxi': 10, 'bus': 8, 'underground': 4, 'ferry': 0}
         self.tickets = {'taxi': 25, 'bus': 25, 'underground': 25, 'ferry': 0}

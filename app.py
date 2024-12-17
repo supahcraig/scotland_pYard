@@ -46,7 +46,9 @@ def handle_new_player(data):
 
     p = game.players[i]
     p.player_index = i
+    p.color = data['playerColor']
     print(f'{p.name} has session id={p.id}')
+    print(f'{data.color=}')
 
     if p.mrx:
         role = 'Mr. X'
@@ -77,7 +79,7 @@ def initialize_board():
 def initialize_ticket_grid():
     print(f'Initializing the ticket grid for all players....')
 
-    players = [{'name': p.name, 'index': p.player_index} for p in game.players if not p.mrx]
+    players = [{'name': p.name, 'index': p.player_index, 'color': p.color} for p in game.players if not p.mrx]
 
     emit('initialize_ticket_grid', {'players': players}, broadcast=True)
 
