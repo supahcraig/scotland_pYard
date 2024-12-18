@@ -8,6 +8,8 @@ def encode_image(image_path):
 
 
 def build_map_image(output_filename, coord_list):
+    print('building map image....')
+
     width = '2400px'
     height = '1800px'
 
@@ -21,18 +23,18 @@ def build_map_image(output_filename, coord_list):
 
     dwg.save()
 
-    # colors are now chosen by the player at join time
-    #player_colors = ['slateblue', 'hotpink', 'purple', 'aqua', 'darkred', 'lightgreen']
-
     # if 2 people are on the same spot, we make the circle's progressively bigger
+    # start by creating a dict where the key is the coordinates (x,y), the value is the count of people there
     collisions = {}
 
-    for i, c in enumerate(coord_list):
-        # need to slice, since the coordds are the first 2 elements, and the color was injected later as the 3rd
-        if c[:2] != (0, 0):
-            collisions[c] = collisions.get(c, 0) + 1
+    for c in coord_list:
+        xy = c[:2]  # for simplicity
+        collisions[xy] = collisions.get(xy, -1) + 1  # increase if exists, otherwise set to -1
+        # why -1?  When we increment the count by 1 the "trivial" collision will be count=0
 
-            marker_ring = dwg.circle(center=c[:2], r=(55 + (collisions[c] * 10)), stroke=c[2], stroke_width=12, fill='none')
+        if xy != (0, 0):
+            # don't add a ring for the 0,0 case
+            marker_ring = dwg.circle(center=xy, r=(55 + (collisions[xy] * 10)), stroke=c[2], stroke_width=12, fill='none')
 
             dwg.add(marker_ring)
 
@@ -55,12 +57,12 @@ def generate_new_map(players, G):
         # somehow the stops on the image are perfectly on a 100x100 grid
         # also stick the player color in there to properly colorize the map markers
         translated_new_coords = (
-                                 (coords[0] * 100) ,
+                                 (coords[0] * 100),
                                  ((17 - coords[1]) * 100),
                                  p.color,
                                 )
 
-        print(type(translated_new_coords))
+        print(translated_new_coords)
 
         if p.mrx and p.visible_location:
             private_locations.append(translated_new_coords)
@@ -68,7 +70,7 @@ def generate_new_map(players, G):
 
         elif p.mrx and not p.visible_location:
             private_locations.append(translated_new_coords)
-            public_locations.append((0.0, 0.0))
+            public_locations.append((0.0, 0.0, '#000000'))
 
         elif p.detective:
             private_locations.append(translated_new_coords)
