@@ -3,14 +3,14 @@
             display: grid;
             grid-template-columns: repeat(3, 1fr);  /* 3 equal-width columns */
             grid-template-rows: auto auto auto auto; /* 4 rows, adjust heights as needed */
-            gap: 10px;  /* Space between grid items */
+            /*gap: 1px;*/  /* Space between grid items */
         }
 
         /* General styling for grid cells */
         .cell {
             padding: 20px;
-            border: 1px solid #ccc;
-            background-color: #f4f4f4;
+            border: 1px solid #000;
+            /*background-color: #f4f4f4;*/
         }
 
         /* Specific styles for the nested grid (Cell 8) */
@@ -26,11 +26,11 @@
         .cell-2 { background-color: lightgreen; }
         .cell-3 { background-color: lightcoral; }
         .cell-4 {
-            background-color: lightyellow;
+            background-color: charcoal;
             grid-column: span 2;
         }
         .cell-5 {
-            background-color: lightpink;
+            background-color: black;
             grid-column: span 2;
         }
         .cell-6 {
@@ -38,7 +38,12 @@
             grid-row: span 2;
         }
 
-        .grid-map { background-color: white; }
+        .grid-map {
+            display: flex;
+            background-color: black;
+            align-items: center;
+            justify-content: center;
+            }
 
         #startGameContainer{
             display: block;
@@ -46,7 +51,7 @@
         #gameStateContainer{
             display: block;
             border: 2px;
-            background-color: gray;
+            /*background-color: blue;*/
             font-size: 2em;
         }
         #currentTurnPlayer {

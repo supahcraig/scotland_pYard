@@ -61,7 +61,7 @@
             <!--Cell 6 (3rd column)-->
             <div id="ticketInventory" class="tickets-nested-grid">
                 <div id="ticketHeaderRow" class="tickets-header-row">
-                    <div class="tickets-header-cell" style="grid-column: 1; grid-row: 1"></div>
+                    <div class="" style="grid-column: 1; grid-row: 1"></div>
                 </div>
 
                 <div id="ticketsTaxiRow" class="tickets-row">
@@ -178,6 +178,7 @@
         let player_index; // 0 is Mr. X
         let playerId;
         let playerName;
+        let player_color;
         let role;
         let socket;
         let isMyTurn = false; // Track if it's the player's turn
@@ -327,6 +328,7 @@
 
                 // Update the current turn
                 document.getElementById("currentTurnPlayer").innerHTML = `Waiting on ${data.waiting_on}...`
+                document.getElementById("currentTurnPlayer").style.color = "#000000";
 
                 // Show potential moves
                 // TODO: is this even necessary?   Does anyone even look at it?
@@ -346,6 +348,7 @@
                 console.log(data);
 
                 document.getElementById("currentTurnPlayer").innerHTML = `It is your turn.`;
+                document.getElementById("currentTurnPlayer").style.color = player_color;
                 document.getElementById("possibleMovesList").style.display = "none";
 
                 console.log("adding the buttons...");
@@ -439,6 +442,7 @@
 
             // Send player information (username and playerId) to the server
             console.log('color= ', playerColor);
+            player_color = playerColor;
             socket.emit('new_player', { playerId, playerName, playerColor });
 
 
