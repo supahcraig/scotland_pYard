@@ -246,6 +246,7 @@
             var image = document.getElementById("gameMap");
             console.log(image.src)
 
+            //including the query string here allows us to change the query string later to force the image refresh
             if (role == 'mrx') {
                 var newSrc = "static/images/mrx_map.svg?t=1";
             } else {
@@ -382,13 +383,16 @@
                     var newSrc = "static/images/public_map.svg";
                 }
 
-                // this will force the new image to load
+                // this will force the new image to load because we're changing the querystring
                 image.src = newSrc.split('?')[0] + '?t=' + new Date().getTime();
 
+                // This rebuilds the entire move log
                 data.mrx_move_log.forEach((move, index) => {
                     console.log("iterating over the move log");
                     console.log(index, move);
                     console.log(`mrx_move_${index}`);
+
+                    // move = {destination, mode}
 
                     move_log_entry = document.getElementById(`mrx_move_${index}`)
 
@@ -399,7 +403,18 @@
                     img.height = "60";
                     move_log_entry.appendChild(img);
 
-                    move_log_entry.classList.remove('mrx-reveal');
+
+                    if ([2, 7, 12, 17, 23].includes(index)) {
+                        console.log('Overlaying stop number on revealed move ticket');
+                        move_log_entry.classList.remove('mrx-reveal');
+
+                        revealed_loc = document.createElement('div');
+                        revealed_loc.classList.add("overlay-content");
+                        revealed_loc.innerHTML = move.destination;
+
+                        console.log(revealed_loc);
+                        move_log_entry.appendChild(revealed_loc);
+                    };
 
                 });
 

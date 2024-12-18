@@ -13,6 +13,7 @@
         /* Style for each nested item */
         .nested-grid-item {
             padding: 10px;
+            position: relative;
             background-color: darkgray;
             border: 1px solid #ddd;
             text-align: center;
@@ -43,4 +44,20 @@
         .mrx-reveal {
             background-color: black;
             color: white;
+        }
+
+        /* The content that will appear over the image */
+        .overlay-content {
+          position: absolute;
+          top: 50%; /* Position content vertically in the center */
+          left: 15%; /* Position content horizontally in the center */
+          transform: translate(-50%, -50%); /* Adjust for true centering */
+          color: white; /* Set text color */
+          font-size: 24px;
+          font-weight: bold;
+          text-align: center; /* Center text */
+          padding: 10px; /* Add padding for better readability */
+          background: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+          border-radius: 10px; /* Optional: round corners */
+          z-index: 10; /* Ensure the content is above the image */
         }
