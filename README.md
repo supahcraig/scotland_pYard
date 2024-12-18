@@ -50,17 +50,16 @@ If Mr. X gets through 24 rounds without being caught, Mr. X wins and the game is
 
 ## TODO log
 
-* ferry movement isn't handled on the move log
-* ferry movement is actually a "wild card" move that isn't handled either
+* incognito move option
 * Mr. X's double move is not implemented
 * players can all pick the same color, that's a problem
-* inconsistent way of identifying who is mr.x & who's turn it is
+* inconsistent way of identifying who is mr.x & who's turn it is (player index, etc)
 * map can't be displayed on my laptop screen
 
 ### Bigger changes
 * The game join/start is clunky, would like to make it a Host/Lobby/Join sort of thing
 * if you refresh your browser or navigate away accidentally, you lose the game state
-* the turn logic is accidentally recursive, but could be done in a for loop
+* the turn logic is accidentally recursive, but could probably be done in a for loop
 * socket events are sometimes nested, need to unravel that
 * responsive design for the UI?
 * Allow players to select who is Mr. X
