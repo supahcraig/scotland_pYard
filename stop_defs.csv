@@ -1,5 +1,4 @@
 start_node, end_node, transport_mode
-0, 1, taxi
 1, 8, taxi
 1, 58, bus
 1, 9, taxi
