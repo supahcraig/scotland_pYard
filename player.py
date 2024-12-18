@@ -159,13 +159,13 @@ class MrX(Player):
         return destinations
 
 
-    def update_visibility(self, round):
+    def update_visibility(self, round, turn_index):
         print(f'Updating visibility during {round=}')
-        if round in [2, 7, 12, 17, 23]:
-            print('this is a visible round')
+        if round in [2, 7, 12, 17, 23] and turn_index == 0:
+            print('this is a visible round/turn')
             self.visible_location = True
         else:
-            print('this is NOT a visible round')
+            print('this is NOT a visible round/turn')
             self.visible_location = False
 
 

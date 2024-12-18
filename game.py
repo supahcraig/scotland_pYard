@@ -17,7 +17,8 @@ class Game:
         # todo:  make this be more dynamic, the move log & map need to leverage this
         location_reveals = [3, 8, 13, 18, 24]
 
-        self.G = self.create_city_graph('stop_defs.csv')
+        self.G = self.create_city_graph(stop_defs_file='stop_defs.csv',
+                                        grid_locations_file='grid_locations.csv')
 
         draw_map.generate_new_map(self.players, self.G)
 
@@ -28,13 +29,13 @@ class Game:
     def get_game_state(self):
         pass
 
-    def create_city_graph(self, stop_defs_file):
+    def create_city_graph(self, stop_defs_file, grid_locations_file):
         # Create the graph (a simple example of London locations)
-        G = nx.MultiGraph()
+        city_graph = nx.MultiGraph()
 
         # Create a node per entry in the grid locations file
         # append the coordinates to each node
-        with open('grid_locations.csv') as f:
+        with open(grid_locations_file) as f:
             reader = csv.reader(f)
             next(reader)
 
@@ -43,7 +44,7 @@ class Game:
                 x = float(row[1])
                 y = float(row[2])
 
-                G.add_node(stop_number, coords=(x, y))
+                city_graph.add_node(stop_number, coords=(x, y))
 
         # Create edges between each stop, for each valid mode between those stops
         with open(stop_defs_file) as f:
@@ -52,9 +53,9 @@ class Game:
 
             for stop in reader:
                 node1, node2, mode = int(stop[0]), int(stop[1]), stop[2].strip()
-                G.add_edge(node1, node2, mode=mode)
+                city_graph.add_edge(node1, node2, mode=mode)
 
-        return G
+        return city_graph
 
     def create_player(self, name, id):
         # general idea here is that we previously randomized the starting locations
@@ -65,13 +66,15 @@ class Game:
         # The first person to join will be Mr X, so player[0] will always be Mr. X
         # todo would be nice to not require Mr. X to be the first one to join the game
         if len(self.players) == 0:
-            #self.players.append(MrX(name=name, position=118, id=id))
-            self.players.append(MrX(name=name, position=self.starting_locations[len(self.players)], id=id))
+            self.players.append(MrX(name=name,
+                                    position=self.starting_locations[len(self.players)],
+                                    id=id))
             print(f'{name} has joined the game as Mr X.')
 
         else:
-            #self.players.append(Detective(name=name, position=91, id=id))
-            self.players.append(Detective(name=name, position=self.starting_locations[len(self.players)], id=id))
+            self.players.append(Detective(name=name,
+                                          position=self.starting_locations[len(self.players)],
+                                          id=id))
             print(f'{name} has joined the game as a detective.')
 
         return len(self.players) # as a proxy for player ID
@@ -117,7 +120,8 @@ class Game:
         print(f'========================={self.round_number=}')
         print(f'{self.current_turn_index=}')
 
-        self.players[0].update_visibility(self.round_number)
+        # Mr. X visibility needs to be true during his turn, but NOT for the entire round
+        self.players[0].update_visibility(round=self.round_number, turn_index=self.current_turn_index)
 
 
 if __name__ == '__main__':

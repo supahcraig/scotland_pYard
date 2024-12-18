@@ -9,7 +9,7 @@ socketio = SocketIO(app)
 game = Game()
 
 
-@app.route('/game')
+@app.route('/')
 def socket():
     return render_template('index.html')
 
@@ -33,10 +33,8 @@ def handle_join_room(data):
 
 @socketio.on('new_player')
 def handle_new_player(data):
-    player_sid = request.sid # todo rename this attribute as session_id
-    #player_id = data['playerId']
-    #player_name = data['playerName']
-    #players[player_id] = player_name
+    player_sid = request.sid # todo rename this attribute as session_id // huh?  looks like it's already clearly named
+
 
     # grab the specific player we just created
     # function returns the number of players currently in the game, so the index is 1 less than that
@@ -47,7 +45,7 @@ def handle_new_player(data):
     p = game.players[i]
     p.player_index = i
     p.color = data['playerColor']
-    print(f'{p.name} has session id={p.id}')
+    print(f'{p.name} has session id={p.id}')  # todo: the above comment is referring to the player attribute "id"
 
     if p.mrx:
         role = 'Mr. X'
@@ -114,7 +112,7 @@ def initiate_turn():
     # send possible moves to current player & render on screen
 
     # new map needs to be generated at the top of each round, in case Mr X is visible during that round
-    # could probably do this selectively based on the round, but it's lightweight.
+    # PROBLEM: need to have mrx location only be visible during their turn (probably need to show the stop # in the log)
     draw_map.generate_new_map(game.players, game.G)
 
     emit('update_map', {'mrx_move_log': game.players[0].move_log }, broadcast=True)
@@ -154,7 +152,8 @@ def handle_move(move):
     update_tickets()
 
     # generate a new map with updated locations after the move completes
-    draw_map.generate_new_map(game.players, game.G)
+    # if we also update the map at the top of the initiate_turn call, why is it also needed here?  IT ISN'T
+    #draw_map.generate_new_map(game.players, game.G)
 
     # fire the event to tell the page to reload the new image
     emit('update_map', {'mrx_move_log': game.players[0].move_log }, broadcast=True)
