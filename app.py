@@ -20,7 +20,13 @@ def handle_connect():
     session_id = request.sid
     print(f'client connected with session id {session_id}')
 
+    # On connect, new clients will need the players list to populate the lobby
+    # It doesn't feel right to do it in the connect method, but we'll see how it goes.
+    lobby = [{'name': p.name, 'role': p.role, 'color': p.color} for p in game.players]
+
     emit('session_id', {'session_id': session_id}, broadcast=True)
+
+    emit('populate_full_lobby', {'lobby': lobby }, room=session_id)
 
 
 @socketio.on('join_room')

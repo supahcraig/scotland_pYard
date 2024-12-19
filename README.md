@@ -52,7 +52,6 @@ If Mr. X gets through 24 rounds without being caught, Mr. X wins and the game is
 
 * incognito move option
 * Mr. X's double move is not implemented
-* players can all pick the same color, that's a problem
 * inconsistent way of identifying who is mr.x & who's turn it is (player index, etc)
 * map can't be displayed on my laptop screen
 

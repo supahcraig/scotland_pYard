@@ -336,11 +336,25 @@
             // Event listener for the connect event
             socket.on('connect', function() {
                 console.log('Connected to server');
+
             });
 
             // Get session id
             socket.on('session_id', function(data) {
                 session_id = data.session_id;
+            });
+
+
+            // I think this is where we need to (re)-initialize the state of the game, if it exists
+            // but let's start by just populating the player lobby
+            socket.on('populate_full_lobby', function(data) {
+                console.log('New client, seeding lobby...');
+                console.log(data);
+
+                data.lobby.forEach(player => {
+                    add_player_to_lobby(player);
+                });
+
             });
 
 
