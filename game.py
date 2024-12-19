@@ -30,7 +30,7 @@ class Game:
         pass
 
     def create_city_graph(self, stop_defs_file, grid_locations_file):
-        # Create the graph (a simple example of London locations)
+        # Create the graph (a direct clone of the Scotland Yard board game map)
         city_graph = nx.MultiGraph()
 
         # Create a node per entry in the grid locations file

@@ -477,37 +477,53 @@
                 // this will force the new image to load because we're changing the querystring
                 image.src = newSrc.split('?')[0] + '?t=' + new Date().getTime();
 
-                // This rebuilds the entire move log
+
+                // This rebuilds the entire move log -- tickets
+                console.log("iterating over the move log");
                 data.mrx_move_log.forEach((move, index) => {
-                    console.log("iterating over the move log");
                     console.log(index, move);
                     console.log(`mrx_move_${index}`);
 
-                    // move = {destination, mode}
+                    // The move object looks like {destination, mode}
 
-                    move_log_entry = document.getElementById(`mrx_move_${index}`)
+                    move_log_entry = document.getElementById(`mrx_move_${index}`);
+                    console.log("On fetch...", move_log_entry);
 
-                    move_log_entry.innerHTML = '';
+                    move_img = document.getElementById(`mrx_move_${index}_ticket`);
+                    if (move_img) {
+                        move_img.remove();
+                    }
 
+                    move_log_entry.textContent = '';  // clear the text first, but we need to keep the overlay image if it exists
+
+
+                    // Create & append the ticket image for this move
                     img = document.createElement('img');
                     img.src = `static/images/${move.mode}.svg.png`;
+                    img.id = `mrx_move_${index}_ticket`;
                     img.height = "60";
                     move_log_entry.appendChild(img);
 
+                });
 
+
+                // loop over every move in the log and overlay the prior location on the reveal rounds
+                data.mrx_move_log.forEach((move, index) => {
                     if ([2, 7, 12, 17, 23].includes(index)) {
-                        console.log('Overlaying stop number on revealed move ticket');
+                        console.log('Overlaying stop number on Round ' + (index));
                         move_log_entry.classList.remove('mrx-reveal');
 
-                        revealed_loc = document.createElement('div');
+                        // create the reveal overlay element
+                        var revealed_loc = document.createElement('div');
+                        revealed_loc.id = "reveal_overlay_" + (index);
                         revealed_loc.classList.add("overlay-content");
-                        revealed_loc.innerHTML = move.destination;
+                        revealed_loc.textContent = data.mrx_move_log[index-1].destination; // need to add the location from the prior round
 
-                        console.log(revealed_loc);
-                        move_log_entry.appendChild(revealed_loc);
                     };
 
                 });
+
+
 
             });
 
@@ -597,7 +613,7 @@
 
         function addMovesButtons(moves) {
             console.log('adding buttons...');
-            console.log(moves);
+            //console.log(moves);
 
             var container = document.getElementById("movesContainer");
 
@@ -606,7 +622,7 @@
 
             //add a button for each possible move
             moves.forEach(function(move) {
-                console.log(move);
+                //console.log(move);
 
                 var button = document.createElement('button');
                 button.textContent = `${move.destination} via ${move.mode}`;

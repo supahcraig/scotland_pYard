@@ -50,10 +50,14 @@ If Mr. X gets through 24 rounds without being caught, Mr. X wins and the game is
 
 ## TODO log
 
+* need to disable the color picker on game start
+* stop 81 has the wrong coordinates (needs to move right by 1 unit)
 * incognito move option
 * Mr. X's double move is not implemented
 * inconsistent way of identifying who is mr.x & who's turn it is (player index, etc)
 * map can't be displayed on my laptop screen
+* Optionally have Mr. X not even display on his own map, and add a mouseover event to reveal location.
+  * this is to allow for people playing near each other to not cheat
 
 ### Bigger changes
 * The game join/start is clunky, would like to make it a Host/Lobby/Join sort of thing
