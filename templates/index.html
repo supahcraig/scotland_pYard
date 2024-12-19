@@ -42,14 +42,18 @@
                 <h2>Click to Start the Game:</h2>
                 <button id="startGameButton" onclick="startGame()">Start Game</button>
             </div>
+            <div id="instructionsContainer">
+                Detectives try to capture Mr. X by navigating the map of London using taxis, buses, and the tube.  Mr. X is sneaky, and only reveals his location a handful of times during the game.
+                Detectives have a limited number of transportation tickets of each mode, so plan your moves wisely.  Work together to catch that rapscallion!
+            </div>
         </div>
 
         <div class="cell cell-3">
             <div id="playerStateContainer">
                 <div id="role"></div>
-                <div id="yourCurrentPosition">pos</div>
+                <div id="yourCurrentPosition"></div>
                 <div id="detectiveLocations"></div>
-                <div id="possibleMovesList">moves</div>
+                <div id="possibleMovesList"></div>
             </div>
         </div>
 
@@ -487,7 +491,6 @@
                     // The move object looks like {destination, mode}
 
                     move_log_entry = document.getElementById(`mrx_move_${index}`);
-                    console.log("On fetch...", move_log_entry);
 
                     move_img = document.getElementById(`mrx_move_${index}_ticket`);
                     if (move_img) {
@@ -511,13 +514,17 @@
                 data.mrx_move_log.forEach((move, index) => {
                     if ([2, 7, 12, 17, 23].includes(index)) {
                         console.log('Overlaying stop number on Round ' + (index));
+
+                        move_log_entry = document.getElementById(`mrx_move_${index}`);
                         move_log_entry.classList.remove('mrx-reveal');
 
                         // create the reveal overlay element
-                        var revealed_loc = document.createElement('div');
+                        let revealed_loc = document.createElement('div');
                         revealed_loc.id = "reveal_overlay_" + (index);
                         revealed_loc.classList.add("overlay-content");
                         revealed_loc.textContent = data.mrx_move_log[index-1].destination; // need to add the location from the prior round
+
+                        move_log_entry.appendChild(revealed_loc);
 
                     };
 
