@@ -39,11 +39,47 @@
         }
 
         .grid-map {
+            width: 100%;
+            height: auto;
+            max-width: 100%;
+            object-fit: contain;
+
             display: flex;
             background-color: black;
             align-items: center;
             justify-content: center;
+            box-sizing: border-box;
             }
+
+        @media screen and (max-width: 1280px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .grid-map {
+                width: 80%; /* scale to 80% of the parent container */
+                margin: 0 auto; /* center the map horizontally */
+            }
+
+            .cell {
+                padding: 10px; /* reduce padding for smaller screent */
+            }
+        }
+
+
+        @media screen and (max-width: 768px) {
+            .grid-map {
+                width: 90%;
+            }
+
+            .cell {
+                padding: 5px
+            }
+
+        }
+
+
+
 
         #startGameContainer{
             display: block;
@@ -100,4 +136,18 @@
             font-size: 1.2em;
             color: blue;
             margin-top: 10px;
+        }
+        #gameMapContainer {
+            display: flex;
+            justify-content: center; /* horizontally center the image */
+            align-items: center; /* vertically center the image */
+            width:100%; /* allow the container to take up 100% of the parent grid cell's width */
+            height: auto;
+
+        }
+        #gameMap {
+            width: 100%;  /* scale the image to fill it's container */
+            height: auto;
+            max-width: 100%; /* ensure the image doesn't stretch beyond it's container */
+            object-fit: contain;  /* ensures the whole image fits without being cropped */
         }
