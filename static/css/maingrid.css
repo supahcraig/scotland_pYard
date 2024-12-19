@@ -53,7 +53,14 @@
 
         @media screen and (max-width: 1280px) {
             .main-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: 1fr 1fr 1fr;
+                grid-template-rows: auto auto auto auto;
+            }
+
+            /* Reduce width of 3rd column on smaller screens */
+            .cell-3 {
+                grid-column: span 1; /* keep the 3rd column's width smaller on smaller screens */
+                width: 80%;
             }
 
             .grid-map {
@@ -64,16 +71,39 @@
             .cell {
                 padding: 10px; /* reduce padding for smaller screent */
             }
+
+            .nested-grid, .tickets-nested-grid {
+                grid-template-columns: repeat(1, 100%); /* single column layout */
+                grid-template-rows: auto; /* rows adjust based on content */
+            }
+
+            .tickets-grid-item {
+                padding: 8px;
+            }
         }
 
 
         @media screen and (max-width: 768px) {
+            .main-grid {
+                grid-template-columns: 1fr; /* stack everything in a single column */
+            }
+
             .grid-map {
                 width: 90%;
+                margin: 0; /* center horizontally */
             }
 
             .cell {
                 padding: 5px
+            }
+
+            .tickets-nested-grid {
+                grid-template-columns: repeat(1, 80px); /* adjust width for tickets */
+            }
+
+            .nested-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 3px;
             }
 
         }

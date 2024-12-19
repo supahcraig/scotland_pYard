@@ -17,14 +17,50 @@
             background-color: darkgray;
             border: 1px solid #ddd;
             text-align: center;
+            width: 100%;
+            height: auto;
+            box-sizing: border-box;
+        }
+
+        .nested-grid-item img {
+            max-width: 100%;
+            height: auto;
+            object-fit: contain;
         }
 
         .move-log-entry {
-            padding: 10px 20px;
+            padding: 10px; // 20px;
             border: none;
             border-radius: 5px;
             font-size: 16px;
+            width: 100%;
+            height: auto;
         }
+
+
+        @media screen and (max-width: 768px) {
+            .nested-grid {
+                /* Keep 3 columns but scale the content */
+                grid-template-columns: repeat(3, 150px); /* Make columns smaller */
+                grid-template-rows: repeat(8, 80px); /* Adjust row heights */
+            }
+
+            .nested-grid-item {
+                font-size: 12px;
+                padding: 5px
+            }
+
+            .nested-grid-item img {
+                max-width: 80%;
+                height: auto;
+            }
+
+        }
+
+
+
+
+
         .log-taxi {
             background-color: yellow;
             color: black;
