@@ -211,20 +211,37 @@
             e.appendChild(role_div);
 
             color_box = document.createElement('div');
-            color_box.id = `lobby_colorbox_${data.name}`;
+            color_box.id = `lobby_colorbox_picker_${data.name}`;
 
+            // Add the div for the color info
+            color_div = document.createElement('div');
+            color_div.id = `lobby_colorbox_${data.name}`;
+            color_div.classList.add('lobby-nested-grid-item');
+            e.appendChild(color_div);
+
+            // if we're adding color info for ourselves, make it be a color picker & add the event handler for it
+            // otherwise just add a box with that player's color
             if (data.name == playerName) {
                 color_box.innerHTML = `<input type="color" id="playerColorChange" value=${data.color}>`;
+                color_div.appendChild(color_box);
+
+                playerColorChange.addEventListener('change', function() {
+                    console.log('Somebody changed their color...');
+
+                    new_color = playerColorChange.value;
+
+                    socket.emit('color_change', { player_index, new_color } );
+
+                });
+
+
             } else {
                 color_box.classList.add("color-box");
                 color_box.style.backgroundColor = data.color;
-            }
+                color_div.appendChild(color_box);
+        }
 
-            color_div = document.createElement('div');
-            color_div.id = `lobby_role_${data.name}`;
-            color_div.classList.add('lobby-nested-grid-item');
-            color_div.appendChild(color_box);
-            e.appendChild(color_div);
+
 
         }
 
@@ -369,6 +386,19 @@
             });
 
 
+            socket.on('update_color', function(data) {
+                console.log('fanning out the color change...');
+                console.log(data);
+
+                id = 'lobby_colorbox_picker_' + data.name;
+                console.log(id);
+
+                element = document.getElementById(id);
+                console.log(element);
+                element.style.backgroundColor = data.new_color;
+
+            });
+
 
             socket.on('waiting', function(data) {
                 console.log('Waiting...');
@@ -480,6 +510,10 @@
             });
 
         });
+
+
+
+
 
 
         function joinGame() {

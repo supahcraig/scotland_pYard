@@ -68,6 +68,19 @@ def handle_new_player(data):
     },   broadcast=True)
 
 
+@socketio.on('color_change')
+def handle_color_change(data):
+    print('Somebody changed their color...')
+    print(data)
+
+    game.players[data['player_index']].color = data['new_color']
+
+    # send the new color to all the other players
+    emit('update_color', {'name': game.players[data['player_index']].name,
+                          'new_color': data['new_color']
+    }, broadcast=True)
+
+
 def initialize_board():
     print(f'Initializing board...')
 
