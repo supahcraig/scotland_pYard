@@ -229,21 +229,20 @@
                     console.log('Somebody changed their color...');
 
                     new_color = playerColorChange.value;
+                    player_color = new_color;
 
                     socket.emit('color_change', { player_index, new_color } );
 
                 });
 
-
             } else {
                 color_box.classList.add("color-box");
                 color_box.style.backgroundColor = data.color;
                 color_div.appendChild(color_box);
-        }
+            }
 
+        };
 
-
-        }
 
         function update_role(role) {
                 document.getElementById("role").innerHTML = `You are:  ${role}`;
@@ -391,10 +390,8 @@
                 console.log(data);
 
                 id = 'lobby_colorbox_picker_' + data.name;
-                console.log(id);
 
                 element = document.getElementById(id);
-                console.log(element);
                 element.style.backgroundColor = data.new_color;
 
             });
