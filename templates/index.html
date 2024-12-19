@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/tickets.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/movelog.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/buttons.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/playerLobby.css') }}">
 
     <style>
         body {
@@ -28,6 +29,12 @@
                 <input type="color" id="playerColor" >
                 <button onclick="joinGame()">Join Game</button>
             </div>
+            <div id="playerLobbyContainer">
+                <!-- row -->
+                <div id="playerLobbyGrid" class="lobby-nested-grid">
+                </div>
+            </div>
+
         </div>
 
         <div class="cell cell-2">
@@ -185,6 +192,41 @@
         let currentTurnPlayerId; // Store current turn player's ID
         let session_id;
 
+        function add_player_to_lobby(data) {
+            console.log("Adding a player to the lobby...");
+
+            e = document.getElementById("playerLobbyGrid");
+
+
+            name_div = document.createElement('div');
+            name_div.id = `lobby_name_${data.name}`;
+            name_div.classList.add('lobby-nested-grid-item');
+            name_div.textContent = data.name;
+            e.appendChild(name_div);
+
+            role_div = document.createElement('div');
+            role_div.id = `lobby_role_${data.name}`;
+            role_div.classList.add('lobby-nested-grid-item');
+            role_div.textContent = data.role;
+            e.appendChild(role_div);
+
+            color_box = document.createElement('div');
+            color_box.id = `lobby_colorbox_${data.name}`;
+
+            if (data.name == playerName) {
+                color_box.innerHTML = `<input type="color" id="playerColorChange" value=${data.color}>`;
+            } else {
+                color_box.classList.add("color-box");
+                color_box.style.backgroundColor = data.color;
+            }
+
+            color_div = document.createElement('div');
+            color_div.id = `lobby_role_${data.name}`;
+            color_div.classList.add('lobby-nested-grid-item');
+            color_div.appendChild(color_box);
+            e.appendChild(color_div);
+
+        }
 
         function update_role(role) {
                 document.getElementById("role").innerHTML = `You are:  ${role}`;
@@ -315,6 +357,14 @@
                 data.players.forEach(person => {
                     add_player_to_ticket_grid(person);
                 });
+
+            });
+
+            socket.on('player_added', function(data) {
+                console.log('Player added...');
+                console.log(data);
+
+                add_player_to_lobby(data);
 
             });
 

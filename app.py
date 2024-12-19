@@ -48,19 +48,24 @@ def handle_new_player(data):
     print(f'{p.name} has session id={p.id}')  # todo: the above comment is referring to the player attribute "id"
 
     if p.mrx:
-        role = 'Mr. X'
+        p.role = 'Mr. X'
         p.my_turn = True
 
     elif p.detective:
-        role = 'Detective'
+        p.role = 'Detective'
         p.my_turn = False
     else:
         role = 'UNKNOWN'
 
     emit('initial_player_state', {'location': p.position,
-                                  'role': role,
+                                  'role': p.role,
                                   'player_index': p.player_index,
     }, room=p.id)
+
+    emit('player_added', {'name': p.name,
+                          'color': p.color,
+                          'role': p.role,
+    },   broadcast=True)
 
 
 def initialize_board():

@@ -1,0 +1,28 @@
+        .lobby-nested-grid {
+            display: grid;
+            grid-template-columns: repeat(3, auto); /* 8 columns in the nested grid */
+            grid-template-rows: repeat(2, 30px); /* 3 rows in the nested grid */
+            border: 2px solid blue;
+            gap: 5px;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        /* Style for each nested item */
+        .lobby-nested-grid-item {
+            padding: 5px;
+            position: relative;
+            /*background-color: darkgray;*/
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        .color-box {
+            width: 50px;    /* Width of the color box */
+            height: 20px;   /* Height of the color box */
+            border: 2px solid #000; /* Optional border for visual clarity */
+            cursor: pointer; /* Optional: makes the box feel interactive */
+        }
+
+
