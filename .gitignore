@@ -1,5 +1,5 @@
-images/mrx_map.svg
-images/public_map.svg
+static/images/mrx_map.svg
+static/images/public_map.svg
 __pycache__/
 venv/
-
+.idea/
