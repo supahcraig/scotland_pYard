@@ -24,7 +24,7 @@ Each player will enter their name, pick a color, and hit join game.  The _first_
 
 ### Start the game
 
-The host will have a button labeled `Start Game` which will actually start the game.
+The host will have a button labeled `Start Game` which will actually start the game.   The host is whoever joins first (for better or worse).
 
 
 
@@ -47,6 +47,25 @@ If a detective moves to the same spot as Mr. X, the detectives win and the game 
 
 If Mr. X gets through 24 rounds without being caught, Mr. X wins and the game is over.
 
+---
+
+## How it's built
+
+
+### The Application
+
+It's primarily a flask & flask-socketio app, with the web side functioning as a SPA.  
+
+
+### The map
+
+The map image is borrowed from Wikipedia, as are the ticket token images used.   The original game board is an quasi-isometric view of the streets of London.  Our map is a fully grid-oriented/orthogonal model of that board, which obviously is much easier to deal with.
+
+The python module netowrkx is used to implement the map as bi-directional multi-edge graph.   The stops are nodes, and are read in from a file I had to key in myself.  The edges are also read in from a file, again keyed in manually.
+
+For each to/from location pair, we programmatically inject an "incognito" edge to allow for the incognito move functionality.
+
+The player's markers are overlaid on the map using python's svgwrite module, with the app refreshing the image after each turn.  A possible enhancement would be to do this more directly in the DOM using `<svg>` tags.
 
 ## TODO log
 

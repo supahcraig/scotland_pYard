@@ -520,6 +520,7 @@ start_node, end_node, transport_mode
 115, 126, taxi
 115, 127, taxi
 115, 118, ferry
+115, 118, incognito
 115, 157, ferry
 116, 104, taxi
 116, 117, taxi
@@ -540,6 +541,7 @@ start_node, end_node, transport_mode
 118, 116, bus
 118, 135, bus
 118, 115, ferry
+118, 115, incognito
 119, 107, taxi
 119, 118, taxi
 119, 136, taxi

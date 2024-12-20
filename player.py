@@ -47,11 +47,9 @@ class Player:
                     print(f'{data["mode"]} routes are not available because you have no {data["mode"]} tickets remaining.')
 
         destinations = [{'destination': dest, 'mode': mode} for dest, mode in destinations_set]
-        print('destinations', destinations)
 
         mode_sort_order = {'taxi': 0, 'bus': 1, 'underground': 2, 'ferry': 3, 'incognito': 4, '2xMove': 5}
-        sorted_destinations = sorted(destinations, key=lambda x: (x['destination'], mode_sort_order[x['mode']]))
-        print('sorted...', sorted_destinations)
+        sorted_destinations = sorted(destinations, key=lambda x: (mode_sort_order[x['mode']], x['destination']))
 
         return sorted_destinations
 
@@ -134,7 +132,7 @@ class MrX(Player):
         self.visible_location = False
         self.my_turn = True
 
-        self.tickets = {'taxi': 25, 'bus': 25, 'underground': 25, 'ferry': 2, '2xMove': 2}
+        self.tickets = {'taxi': 25, 'bus': 25, 'underground': 25, 'ferry': 2, 'incognito': 2, '2xMove': 2}
 
     def potential_destinations(self, city_graph, detective_locations):
         # TODO:  nearly all of this logic is duplicated in the similar method in the Player class
@@ -157,7 +155,7 @@ class MrX(Player):
         destinations = [{'destination': dest, 'mode': mode} for dest, mode in available]
 
         mode_sort_order = {'taxi': 0, 'bus': 1, 'underground': 2, 'ferry': 3, 'incognito': 4, '2xMove': 5}
-        sorted_destinations = sorted(destinations, key=lambda x: (x['destination'], mode_sort_order[x['mode']]))
+        sorted_destinations = sorted(destinations, key=lambda x: ( mode_sort_order[x['mode']], x['destination'] ))
 
 
         return sorted_destinations

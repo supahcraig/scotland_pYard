@@ -47,15 +47,55 @@ class Game:
                 city_graph.add_node(stop_number, coords=(x, y))
 
         # Create edges between each stop, for each valid mode between those stops
+        edges_list = self.__load_edges__(stop_defs_file)
+
+        # inject an incognito edge for each from/to combo; remove ferry edges (since these are actually incognito edges)
+        final_edges_list = self.__inject_incognito_edges__(edges_list)
+
+
+        for e in final_edges_list:
+            city_graph.add_edge(e[0], e[1], mode=e[2])
+
+        #with open(stop_defs_file) as f:
+        #    reader = csv.reader(f)
+        #    next(reader)  # skip header row
+
+        #    for stop in reader:
+        #        node1, node2, mode = int(stop[0]), int(stop[1]), stop[2].strip()
+        #        city_graph.add_edge(node1, node2, mode=mode)
+
+        return city_graph
+
+    def __load_edges__(self, stop_defs_file):
+        edges_list = []
         with open(stop_defs_file) as f:
             reader = csv.reader(f)
             next(reader)  # skip header row
 
             for stop in reader:
-                node1, node2, mode = int(stop[0]), int(stop[1]), stop[2].strip()
-                city_graph.add_edge(node1, node2, mode=mode)
+                edges_list.append((int(stop[0]), int(stop[1]), stop[2].strip()))
 
-        return city_graph
+        return edges_list
+
+    def __inject_incognito_edges__(self, edges_list):
+        edge_count = {}
+        edge_list = []
+
+        for e in edges_list:
+            if e[2] != 'ferry':
+                edge_count[(e[0], e[1])] = edge_count.get((e[0], e[1]), 0) + 1
+                edge_list.append((e[0], e[1], e[2]))
+
+                if edge_count[(e[0], e[1])] == 1:
+                    edge_list.append((e[0], e[1], 'incognito'))
+
+        return edge_list
+
+
+
+
+
+
 
     def create_player(self, name, id):
         # general idea here is that we previously randomized the starting locations
