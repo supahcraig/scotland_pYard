@@ -84,7 +84,7 @@ class Game:
         return p.move(new_position=new_position, transportation_mode=mode, city_graph=self.G)
 
     def check_for_win(self):
-        print(f'checking for win on {self.round_number=}')
+        #print(f'checking for win on {self.round_number=}')
 
         # check if Mr X is in the same location as the current player
         detective_positions = [x.position for x in self.players if not x.mrx]

@@ -175,10 +175,6 @@ def handle_move(move):
     # send the updated ticket inventory to the page
     update_tickets()
 
-    # generate a new map with updated locations after the move completes
-    # if we also update the map at the top of the initiate_turn call, why is it also needed here?  IT ISN'T
-    #draw_map.generate_new_map(game.players, game.G)
-
     # fire the event to tell the page to reload the new image
     emit('update_map', {'mrx_move_log': game.players[0].move_log }, broadcast=True)
 
@@ -206,7 +202,7 @@ def handle_move(move):
 
 def update_tickets():
     ticket_inventory = [{'name': t.name, 'tickets': t.tickets} for t in game.players if not t.mrx ]
-    print(ticket_inventory)
+    #print(ticket_inventory)
 
     emit('update_tickets', {'ticket_inventory': ticket_inventory}, broadcast=True)
 

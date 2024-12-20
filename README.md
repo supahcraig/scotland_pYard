@@ -54,8 +54,7 @@ If Mr. X gets through 24 rounds without being caught, Mr. X wins and the game is
 * stop 81 has the wrong coordinates (needs to move right by 1 unit)
 * incognito move option
 * Mr. X's double move is not implemented
-* inconsistent way of identifying who is mr.x & who's turn it is (player index, etc)
-* map can't be displayed on my laptop screen
+* inconsistent way in code of identifying who is mr.x & who's turn it is (player index, etc)
 * Optionally have Mr. X not even display on his own map, and add a mouseover event to reveal location.
   * this is to allow for people playing near each other to not cheat
 
@@ -64,6 +63,9 @@ If Mr. X gets through 24 rounds without being caught, Mr. X wins and the game is
 * if you refresh your browser or navigate away accidentally, you lose the game state
 * the turn logic is accidentally recursive, but could probably be done in a for loop
 * socket events are sometimes nested, need to unravel that
-* responsive design for the UI?
 * Allow players to select who is Mr. X
   * IDEA:  have all the players join into a "staging" array, then once mr. x joins actually create the player objects in the correct order (Mr. X being player[0])
+* Replace svgwrite with <svg> tags in html/javasciprt
+  * this could allow for cool things such as:
+    * animation of the movement
+    * keeping a path of Mr X to be revealed at the end of the game

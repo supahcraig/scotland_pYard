@@ -30,11 +30,10 @@ class Player:
         return state
 
     def update_move_log(self, destination, mode):
-        print('updating move log: ', destination, mode)
+        #print('updating move log: ', destination, mode)
         self.move_log.append({'destination': destination, 'mode': mode})
 
     def potential_destinations(self, city_graph):
-        #pm = city_graph.edges(self.position, data=True)
 
         destinations_set = set()
 
@@ -48,12 +47,18 @@ class Player:
                     print(f'{data["mode"]} routes are not available because you have no {data["mode"]} tickets remaining.')
 
         destinations = [{'destination': dest, 'mode': mode} for dest, mode in destinations_set]
+        print('destinations', destinations)
 
-        print(f'Possible destinations/modes: {destinations}')
-        return destinations
+        mode_sort_order = {'taxi': 0, 'bus': 1, 'underground': 2, 'ferry': 3, 'incognito': 4, '2xMove': 5}
+        sorted_destinations = sorted(destinations, key=lambda x: (x['destination'], mode_sort_order[x['mode']]))
+        print('sorted...', sorted_destinations)
+
+        return sorted_destinations
 
     def move(self, new_position, transportation_mode, city_graph):
         # Basic move method, can be overridden
+        # TODO:  nearly all of this logic is duplicated in the similar method in the Player class
+
         print(f'Attempting to move {self.name} from {self.position} to {new_position} via {transportation_mode}')
 
         moved = False
@@ -92,8 +97,9 @@ class Player:
             return False
 
     def check_for_available_moves(self, detective_positions, city_graph):
+        # TODO:  is this method even in use??
         possible_moves = city_graph.edges(self.position)
-        #print(possible_moves)
+
         return True
 
     def show_location(self, fig):
@@ -111,10 +117,7 @@ class Detective(Player):
         for x in city_graph.edges(self.position):
             possible_destinations.append(x[1])
 
-        #detective_positions.append(self.position)
-        #possible_destinations.append(self.position)
-
-        available_moves = list(set(detective_positions)) # - set(possible_destinations))
+        available_moves = list(set(detective_positions))
         print(f'These are your available_moves: {available_moves}')
 
         if available_moves == []:
@@ -134,8 +137,7 @@ class MrX(Player):
         self.tickets = {'taxi': 25, 'bus': 25, 'underground': 25, 'ferry': 2, '2xMove': 2}
 
     def potential_destinations(self, city_graph, detective_locations):
-        #pm = city_graph.edges(self.position, data=True)
-
+        # TODO:  nearly all of this logic is duplicated in the similar method in the Player class
         destinations_set = set()
 
         for u, v, data in city_graph.edges(self.position, data=True):
@@ -147,17 +149,18 @@ class MrX(Player):
                 else:
                     print(f'{data["mode"]} routes are not available because you have no {data["mode"]} tickets remaining.')
 
-        # ok this doesn't work because it takes mode into account.
+        # TODO:  this doesn't work because it takes mode into account.
         print(f'your possible moves: {destinations_set}....detectives are at {detective_locations}')
         available = destinations_set - set(detective_locations)
         print(f'your available moves are {available}')
 
-        #destinations = [{'destination': dest, 'mode': mode} for dest, mode in destinations_set]
         destinations = [{'destination': dest, 'mode': mode} for dest, mode in available]
 
-        print(f'Possible destinations/modes: {destinations}')
-        return destinations
+        mode_sort_order = {'taxi': 0, 'bus': 1, 'underground': 2, 'ferry': 3, 'incognito': 4, '2xMove': 5}
+        sorted_destinations = sorted(destinations, key=lambda x: (x['destination'], mode_sort_order[x['mode']]))
 
+
+        return sorted_destinations
 
     def update_visibility(self, round, turn_index):
         print(f'Updating visibility during {round=}')
@@ -178,6 +181,7 @@ class MrX(Player):
 
 
     def check_for_available_moves(self, detective_positions, city_graph):
+        # TODO:  is this method being used?
         possible_destinations = []
         for x in city_graph.edges(self.position):
             possible_destinations.append(x[1])
