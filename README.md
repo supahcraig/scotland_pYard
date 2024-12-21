@@ -69,16 +69,31 @@ The player's markers are overlaid on the map using python's svgwrite module, wit
 
 ## TODO log
 
-* need to disable the color picker on game start
-* stop 81 has the wrong coordinates (needs to move right by 1 unit)
-* incognito move option
+* need to disable the color picker on game start (actually maybe not, you can change your color on the fly, currently)
+* stop 81 has the wrong coordinates (needs to move right by 1 unit): fixed/fenman500 to submit PR to correct README
 * Mr. X's double move is not implemented
 * inconsistent way in code of identifying who is mr.x & who's turn it is (player index, etc)
 * Optionally have Mr. X not even display on his own map, and add a mouseover event to reveal location.
   * this is to allow for people playing near each other to not cheat
+  * this would be easier to implement if pivot to `<svg>` tags rather than building/reloading the entire image.
+* Make the end game more dramatic
+* Add a "protected" reset/restart game button to make game restarts easier
+ 
+### Game Play mods
+* Add a way to enable "bobby mode" which gives detectives unlimited tickets
+* allow for custom ticket inventories per player
+* "beginner mode"
+  * mr x starts on 82
+  * detectives on [41, 46, 124, 142] (not randomized)
+  * only 13 rounds
+  * 1 incognito, 1 2x move
+* Introduce construction/roadblocks (see wiki re: NY Chase)
+* https://boardgamegeek.com/filepage/26406/variantspdf
+
 
 ### Bigger changes
 * The game join/start is clunky, would like to make it a Host/Lobby/Join sort of thing
+  * with the playerLobby container, this is much better now
 * if you refresh your browser or navigate away accidentally, you lose the game state
 * the turn logic is accidentally recursive, but could probably be done in a for loop
 * socket events are sometimes nested, need to unravel that
@@ -88,3 +103,13 @@ The player's markers are overlaid on the map using python's svgwrite module, wit
   * this could allow for cool things such as:
     * animation of the movement
     * keeping a path of Mr X to be revealed at the end of the game
+* Possibly use something like vue.js to make the UI layer more modern & easier to support
+* Use the _actual_ gameboard (gameboard.png)
+  * this will require the svg update due to the image size
+
+
+# See Also
+
+https://github.com/emil64/Scotland-Yard
+https://github.com/emil64/Scotland-Yard-AI
+

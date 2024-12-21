@@ -18,10 +18,9 @@
     </style>
 </head>
 <body>
-
     <div class="main-grid">
         <!-- Row 1: 3 columns -->
-        <div class="cell cell-1">
+        <div id="playerInfoContainer" class="cell cell-1">
             <!-- Player Name Input -->
             <div id="playerNameContainer">
                 <h2>Enter your name:</h2>
@@ -34,10 +33,9 @@
                 <div id="playerLobbyGrid" class="lobby-nested-grid">
                 </div>
             </div>
-
         </div>
 
-        <div class="cell cell-2">
+        <div id="instructionsContainer" class="cell cell-2">
             <div id="startGameContainer">
                 <h2>Click to Start the Game:</h2>
                 <button id="startGameButton" onclick="startGame()">Start Game</button>
@@ -50,6 +48,9 @@
 
         <div class="cell cell-3">
             <div id="playerStateContainer">
+                <div id="resetGameContainer" align="right">
+                    <button onclick="resetGame()">Reset Game</button>
+                </div>
                 <div id="role"></div>
                 <div id="yourCurrentPosition"></div>
                 <div id="detectiveLocations"></div>
@@ -166,6 +167,43 @@
         let isMyTurn = false; // Track if it's the player's turn
         let currentTurnPlayerId; // Store current turn player's ID
         let session_id;
+
+        let initial_ui_state = {};
+
+        initial_ui_state.playerInfoContainer = document.getElementById('playerInfoContainer').innerHTML;
+        initial_ui_state.instructionsContainer = document.getElementById('instructionsContainer').innerHTML;
+        initial_ui_state.playerStateContainer = document.getElementById('playerStateContainer').innerHTML;
+        initial_ui_state.gameStateContainer = document.getElementById('gameStateContainer').innerHTML;
+        initial_ui_state.movesContainer = document.getElementById('movesContainer').innerHTML;
+        initial_ui_state.ticketInventoryContainer = document.getElementById('ticketInventoryContainer').innerHTML;
+        initial_ui_state.gameMapContainer = document.getElementById('gameMapContainer').innerHTML;
+        initial_ui_state.mrx_move_log = document.getElementById('mrx_move_log').innerHTML;
+
+
+        function resetGame() {
+            console.log('Reset requested');
+            socket.emit('reset_game');
+        };
+
+
+        function resetGameState() {
+            console.log('Resetting game state by re-initializing the UI containers...');
+            // some top level variables get re-set through other means
+            playerId = '';
+            playerName = '';
+            player_color = '';
+            role = '';
+            isMyTurn = false;
+
+            for ( [id, html] of Object.entries(initial_ui_state)) {
+                console.log(id, html);
+                document.getElementById(id).innerHTML = html;
+            }
+
+        };
+
+
+
 
         function add_player_to_lobby(data) {
             console.log("Adding a player to the lobby...");
@@ -319,6 +357,12 @@
                 session_id = data.session_id;
             });
 
+
+            socket.on('game_reset', function(data) {
+                console.log('Resetting game...', data);
+
+                resetGameState();
+            });
 
             // I think this is where we need to (re)-initialize the state of the game, if it exists
             // but let's start by just populating the player lobby

@@ -37,6 +37,15 @@ def handle_join_room(data):
     emit('response', {'message': f'You have joined room {room}'}, room=room)
 
 
+@socketio.on('reset_game')
+def reset_game():
+    # can I just trash the Game object and re-instantiate?
+    global game
+    game = Game()
+
+    emit('game_reset', broadcast=True)
+
+
 @socketio.on('new_player')
 def handle_new_player(data):
     player_sid = request.sid # todo rename this attribute as session_id // huh?  looks like it's already clearly named
