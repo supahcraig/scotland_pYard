@@ -70,7 +70,6 @@ The player's markers are overlaid on the map using python's svgwrite module, wit
 ## TODO log
 
 * need to disable the color picker on game start (actually maybe not, you can change your color on the fly, currently)
-* stop 81 has the wrong coordinates (needs to move right by 1 unit): fixed/fenman500 to submit PR to correct README
 * Mr. X's double move is not implemented
 * inconsistent way in code of identifying who is mr.x & who's turn it is (player index, etc)
 * Optionally have Mr. X not even display on his own map, and add a mouseover event to reveal location.
