@@ -48,6 +48,7 @@ def reset_game():
 
 @socketio.on('new_player')
 def handle_new_player(data):
+    print(f'New Player Init data:', data)
     player_sid = request.sid # todo rename this attribute as session_id // huh?  looks like it's already clearly named
 
 
@@ -60,7 +61,7 @@ def handle_new_player(data):
     p = game.players[i]
     p.player_index = i
     p.color = data['playerColor']
-    print(f'{p.name} has session id={p.id}')  # todo: the above comment is referring to the player attribute "id"
+    print(f'{p.name} has session id={p.sid}')  # todo: the above comment is referring to the player attribute "id"
 
     if p.mrx:
         p.role = 'Mr. X'
@@ -75,7 +76,7 @@ def handle_new_player(data):
     emit('initial_player_state', {'location': p.position,
                                   'role': p.role,
                                   'player_index': p.player_index,
-    }, room=p.id)
+    }, room=p.sid)
 
     emit('player_added', {'name': p.name,
                           'color': p.color,
@@ -102,7 +103,7 @@ def initialize_board():
     for p in game.players:
         print(f'initializing for {p.name}')
         emit('initialize', {'player': p.get_current_state()}
-            , room=p.id
+            , room=p.sid
         )
 
 
@@ -160,13 +161,13 @@ def initiate_turn():
             emit('waiting', {'waiting_on': game.players[game.current_turn_index].name,
                              'potentialMovesList': available_moves,
                              },
-                 room=p.id)
+                 room=p.sid)
 
         else:
             if available_moves != []:
                 emit('your_turn', {'potentialMovesList': available_moves,
                                    },
-                     room=p.id)
+                     room=p.sid)
             else:
                 print(f'No moves available for {p.name}')
 

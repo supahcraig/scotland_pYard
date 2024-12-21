@@ -76,7 +76,9 @@ The player's markers are overlaid on the map using python's svgwrite module, wit
   * this is to allow for people playing near each other to not cheat
   * this would be easier to implement if pivot to `<svg>` tags rather than building/reloading the entire image.
 * Make the end game more dramatic
+* Need to improve the end game execution, and allow for a replay
 * Add a "protected" reset/restart game button to make game restarts easier
+* some socket events should probably just be REST calls (i.e. player joins lobby)
  
 ### Game Play mods
 * Add a way to enable "bobby mode" which gives detectives unlimited tickets

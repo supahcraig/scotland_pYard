@@ -26,6 +26,8 @@ class Game:
         self.round_number = 1
         self.turn_number = 0
 
+        self.player_lobby = []
+
     def get_game_state(self):
         pass
 
@@ -93,11 +95,35 @@ class Game:
 
 
 
+    def add_player_to_lobby(self, data):
+        print(f'player added to lobby: ', data)
+
+        # players are first added to the lobby in any order, and with the default role of D (for detective).
+        # when the game starts, the lobby will be transferred to actual players, with Mr X being created first
+        # in order to ensure that Mr X is player[0]
+
+        self.player_lobby.append({'name': data['name'],
+                                  'session_id': request.sid,
+                                  'color': data['color'],
+                                  'role': 'D',
+                                  }
+                                 )
 
 
 
+    def create_players_from_lobby(self):
+        # Create Mr. X first
 
-    def create_player(self, name, id):
+
+        # then create the detectives
+        for p in self.player_lobby:
+            if p.role == 'D':
+                new_player = self.create_player(name=p.name, sid=p.sid)
+                new_player.color = p.color
+
+
+
+    def create_player(self, name, sid):
         # general idea here is that we previously randomized the starting locations
         # then each player's starting location will be the next element in that list,
         # and we'll use the current numbers of players as the location index
@@ -108,13 +134,13 @@ class Game:
         if len(self.players) == 0:
             self.players.append(MrX(name=name,
                                     position=self.starting_locations[len(self.players)],
-                                    id=id))
+                                    sid=sid))
             print(f'{name} has joined the game as Mr X.')
 
         else:
             self.players.append(Detective(name=name,
                                           position=self.starting_locations[len(self.players)],
-                                          id=id))
+                                          sid=sid))
             print(f'{name} has joined the game as a detective.')
 
         return len(self.players) # as a proxy for player ID

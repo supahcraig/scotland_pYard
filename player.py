@@ -1,9 +1,9 @@
 
 
 class Player:
-    def __init__(self, name, position, id):
+    def __init__(self, name, position, sid):
         #self.G = city_graph
-        self.id = id  # this is the session ID for the player
+        self.sid = sid  # this is the session ID for the player
         self.player_index = -1 # todo should probably initialize this on create
         self.mrx = False
         self.detective = True
@@ -124,8 +124,8 @@ class Detective(Player):
             return True
 
 class MrX(Player):
-    def __init__(self, name, position, id):
-        super().__init__(name, position, id)
+    def __init__(self, name, position, sid):
+        super().__init__(name, position, sid)
         #self.G = city_graph
         self.mrx = True
         self.detective = False
