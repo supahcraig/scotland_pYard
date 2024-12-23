@@ -11,6 +11,12 @@ Yes, the UI is hideous.   A lot of that is to help visualize the grid within the
 ### "Install"
 clone the repo, install the requirements
 
+#### Optional: Docker
+
+Build the image:  `docker build --tag scotland-pyard .`
+
+Run the container:  ` docker run -d -p 5000:5000 scotland-pyard`
+
 ### Run the app
 `python app.py`
 
