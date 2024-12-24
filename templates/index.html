@@ -113,7 +113,9 @@
         <div class="cell grid-map" style="grid-column: span 2;">
             <!--Cell 7 (spans left 2 columns)-->
             <div id="gameMapContainer">
-                <img id="gameMap" src="static/images/SY_base_map.svg.png">
+                <img id="gameMap" src="static/images/SY_base_map.svg.png"
+                    onmouseover="mapMouseOver(this)"
+                    onmouseout="this.src='static/images/public_map.svg?t=' + new Date().getTime()" />
             </div>
         </div>
 
@@ -202,6 +204,14 @@
 
         };
 
+
+        function mapMouseOver(img) {
+            if (role == 'mrx') {
+                img.src = 'static/images/mrx_map.svg?t=' + new Date().getTime();
+            } else {
+                img.src = 'static/images/public_map.svg?t=' + new Date().getTime();
+            }
+        }
 
 
 
@@ -319,7 +329,10 @@
 
             //including the query string here allows us to change the query string later to force the image refresh
             if (role == 'mrx') {
-                var newSrc = "static/images/mrx_map.svg?t=1";
+                // all players need the public map loaded as the primary image
+                // mrx map only needs to show on mouseover for Mr. X
+                var newSrc = "static/images/public_map.svg?t=1";
+                //var newSrc = "static/images/mrx_map.svg?t=1";
             } else {
                 var newSrc = "static/images/public_map.svg?t=1";
             }
@@ -488,7 +501,11 @@
                 var image = document.getElementById("gameMap");
 
                 if (role == 'mrx') {
-                    var newSrc = "static/images/mrx_map.svg";
+                    // mouseover logic handles displaying the correct image
+                    // all players need the public map loaded as primary
+
+                    //var newSrc = "static/images/mrx_map.svg";
+                    var newSrc = "static/images/public_map.svg";
                 } else {
                     var newSrc = "static/images/public_map.svg";
                 }

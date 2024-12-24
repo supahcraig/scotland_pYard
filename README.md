@@ -79,12 +79,9 @@ The player's markers are overlaid on the map using python's svgwrite module, wit
 * remove potential move list when it's not your turn
 * Mr. X's double move is not implemented
 * inconsistent way in code of identifying who is mr.x & who's turn it is (player index, etc)
-* Optionally have Mr. X not even display on his own map, and add a mouseover event to reveal location.
-  * this is to allow for people playing near each other to not cheat
-  * this would be easier to implement if pivot to `<svg>` tags rather than building/reloading the entire image.
 * Make the end game more dramatic
-* Need to improve the end game execution, and allow for a replay
-* Add a "protected" reset/restart game button to make game restarts easier
+* Need to improve the end game execution
+* Need to "protect" the reset button
 * some socket events should probably just be REST calls (i.e. player joins lobby)
  
 ### Game Play mods
